@@ -1,33 +1,34 @@
-{% extends "baseHtml.html" %}
+{% extends "mainHtml.html" %}
+{% block content %}
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">url1</a></li>
+                <li class="breadcrumb-item"><a href="#">url2</a></li>
+                <li class="breadcrumb-item active" aria-current="page">url3</li>
+            </ol>
+        </nav>
 
-{% block conent %}
-    <div class="container">
-        <div class="col-md-4">
-            <div class="panel  panel-warning">
-                <div class="panel-heading">
-                    <h3 class="panel-title">待办事项 <small>查看更多</small></h3>
-                </div>
-                <div class="panel-body text-center">
-                    目前没有代办任务
-                </div>
-                <div class="panel-body text-center">
-                    查看更多
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">待办事项 <small>查看更多</small></div>
+                    <div class="card-body">
+                        <p class="card-text text-center">目前没有代办任务</p>
+                        <a href="/workbench/todomatters" class="btn btn-primary">查看更多</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">已办事项 <small>查看更多</small></h3>
-                </div>
-                <div class="panel-body text-center">
-                    已办结漏洞共项
-                </div>
-                <div class="panel-body text-center">
-                    进入查看
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">已办事项 <small>查看更多</small></div>
+                    <div class="card-body">
+                        <p class="card-text text-center">已办结漏洞共项</p>
+                        <a href="/workbench/closingmatters" class="btn btn-primary">查看更多</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 {% endblock %}
