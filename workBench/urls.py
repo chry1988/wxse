@@ -9,6 +9,6 @@ urlpatterns = [
     path('closingmatters', views.closingMatters),
     path('vulnerabilitydetailview', views.vulnerabilityDetailView),
     path('scheduledetailview', views.scheduleDetailView),
-    path('warningnotice', views.warningNoticeDetail),
+    path('warningnotice', views.warningNotice),
     path('warningnoticedetail', views.warningNoticeDetail),
 ]

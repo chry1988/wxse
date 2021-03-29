@@ -36,7 +36,7 @@ def scheduleDetailView(request):
 
 
 def warningNotice(request):
-    return None
+    return render(request, 'workBench/warningNotice.html', )
 
 
 def warningNoticeDetail(request):

@@ -8,15 +8,65 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">查看</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Understood</button>
+                    <form class="row g-3">
+                        <div class="col-auto">
+                            <label for="validationCustom01" class="form-label">通告名称</label>
+                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
+                                   disabled readonly>
+                        </div>
+                        <div class="col-auto">
+                            <label for="validationCustom01" class="form-label">严重级别</label>
+                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
+                                   required>
+                        </div>
+                        <div class="col-auto">
+                            <label for="validationCustom01" class="form-label">CVE编号</label>
+                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
+                                   disabled readonly>
+                        </div>
+                        <div class="col-auto">
+                            <label for="validationCustom01" class="form-label">CNNVD编号</label>
+                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
+                                   required>
+                        </div>
+                        <div class="col-auto">
+                            <label for="validationCustom01" class="form-label">影响厂商</label>
+                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
+                                   disabled readonly>
+                        </div>
+                        <div class="col-auto">
+                            <label for="validationCustom01" class="form-label">影响组件</label>
+                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
+                                   required>
+                        </div>
+                        <div class="col-auto">
+                            <label for="validationCustom01" class="form-label">通告时间</label>
+                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
+                                   disabled readonly>
+                        </div>
+                        <div class="col-auto">
+                            <label for="validationCustom01" class="form-label">通告人员</label>
+                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
+                                   required>
+                        </div>
+                        <div class="col-auto">
+                            <label for="validationCustom01" class="form-label">通告描述</label>
+                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
+                                   disabled readonly>
+                        </div>
+                        <div class="col-auto">
+                            <label for="validationCustom01" class="form-label">附件</label>
+                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
+                                   required>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary" type="submit">下载</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -38,35 +88,7 @@
             <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号" required>
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="URL路径" required>
-        </div>
-        <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="漏洞名称" required>
-        </div>
-        <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="影响业务" required>
-        </div>
-        <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="IP地址" required>
-        </div>
-        <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="联系人" required>
-        </div>
-        <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="组织机构" required>
-        </div>
-
-        <div class="col-auto">
-            <select class="form-select" id="validationDefault04" required>
-                <option selected disabled value="">超时状态</option>
-                <option>...</option>
-            </select>
-        </div>
-        <div class="col-auto">
-            <select class="form-select" id="validationDefault04" required>
-                <option selected disabled value="">请选择漏洞级别</option>
-                <option>...</option>
-            </select>
+            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称" required>
         </div>
         <div class="col-auto">
             <button class="btn btn-primary" type="submit">查询</button>
@@ -105,7 +127,7 @@
             <td>
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    Launch static backdrop modal
+                    查看详情
                 </button>
             </td>
         </tr>
