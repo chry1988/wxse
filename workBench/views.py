@@ -16,8 +16,28 @@ def myWorkBench(request):
 
 
 def toDoMatters(request):
-    return HttpResponse('ok')
+    return render(request, 'workBench/toDoMatters.html', )
+
+
+def finishMatters(request):
+    return render(request, 'workBench/finishMatters.html', )
 
 
 def closingMatters(request):
-    return HttpResponse('ok2')
+    return render(request, 'workBench/closingMatters.html', )
+
+
+def vulnerabilityDetailView(request):
+    return None
+
+
+def scheduleDetailView(request):
+    return None
+
+
+def warningNotice(request):
+    return None
+
+
+def warningNoticeDetail(request):
+    return None
