@@ -127,9 +127,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-configureBaseData/migrations/*_auto_*.py
+configureDataBase/migrations/*_auto_*.py
 
-configureBaseData/migrations/*_initial.py
+configureDataBase/migrations/*_initial.py
 
 .idea/
-configureDataBase/migrations/0001_initial.py
+

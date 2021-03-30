@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'configureDataBase',
     'vulnerabilityControler',
     'workBench',
+    'customUser',
 ]
 
 MIDDLEWARE = [
@@ -121,3 +122,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "/static/")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+LOGIN_REDIRECT_URL = '/workbench/myworkbench'
+AUTH_USER_MODEL = 'customUser.wxseUser'
