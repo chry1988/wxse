@@ -8,15 +8,22 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">查看详情</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    ...
+                    <text id="vunerabilityname"></text>
+                    <text id="vunerabilitydetail"></text>
+                    <text id="vunerabilitylevel"></text>
+                    <text id="vunerabilityrepair_method"></text>
+                    <text id="vunerabilitycve_num"></text>
+                    <text id="vunerabilitycnnvd_num"></text>
+                    <text id="vunerabilitydtime"></text>
+                    </text>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Understood</button>
+                    {#                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>#}
+                    {#                    <button type="button" class="btn btn-primary">Understood</button>#}
                 </div>
             </div>
         </div>
@@ -81,39 +88,48 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td colspan="2">Larry the Bird</td>
-            <td>
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    Launch static backdrop modal
-                </button>
-            </td>
-        </tr>
+        {% for item in toDoTasks %}
+            <tr>
+                <th scope="row">1</th>
+                <td>{{ item.taskVulnerability.name }}</td>
+                <td>{{ item.taskVulnerability.level }}</td>
+                <td>{{ item.taskVulnerability.repair_method }}</td>
+                <td>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop" data-tid="{{ item.id }}">
+                        查看详情
+                    </button>
+                </td>
+
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 {% endblock %}
 {% block customerjs %}
     <script type="text/javascript">
         $(document).ready(function () {
-            var myModal = document.getElementById('myModal')
-            var myInput = document.getElementById('myInput')
-            myModal.addEventListener('shown.bs.modal', function () {
-                myInput.focus()
-            })
+            $("button ").click(function () {
+                var tid = $(this).data("tid");
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                data = {
+                    tid: tid,
+                };
+                $.get("/workbench/todomattersdetail", data, function (result) {
+                    var jsonarray = $.parseJSON(result);
+                    {#alert(jsonarray);#}
+                    $("#vunerabilityname").text(jsonarray['queryResult'][0]['name']);
+                    $("#vunerabilitydetail").text(jsonarray['queryResult'][0]['detail']);
+                    $("#vunerabilitylevel").text(jsonarray['queryResult'][0]['level']);
+                    $("#vunerabilityrepair_method").text(jsonarray['queryResult'][0]['repair_method']);
+                    $("#vunerabilitycve_num").text(jsonarray['queryResult'][0]['cve_num']);
+                    $("#vunerabilitycnnvd_num").text(jsonarray['queryResult'][0]['cnnvd_num']);
+                    $("#vunerabilitydtime").text(jsonarray['queryResult'][0]['dtime']);
+
+                })
+            });
         })
+
     </script>
 {% endblock %}

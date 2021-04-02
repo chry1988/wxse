@@ -129,6 +129,7 @@ dmypy.json
 
 configureDataBase/migrations/*_auto_*.py
 configureDataBase/migrations/*_initial.py
-
+customUser/migrations/*_auto_*.py
+customUser/migrations/*_initial.py
 .idea/
 
