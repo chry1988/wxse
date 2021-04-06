@@ -7,9 +7,11 @@ class userScheduleControler(models.Model):
     status = models.CharField(choices=userScheduleControlerChoices, max_length=50)
     taskVulnerability = models.ForeignKey(vulnerability, on_delete=models.DO_NOTHING)
     taskUser = models.ForeignKey(wxseUser, on_delete=models.CASCADE)
+    deadLine = models.DateTimeField()
 
 
 class adminScheduleControler(models.Model):
     status = models.CharField(choices=adminScheduleControlerChoices, max_length=50)
     taskVulnerability = models.ForeignKey(vulnerability, on_delete=models.DO_NOTHING)
     taskUser = models.ForeignKey(wxseUser, on_delete=models.CASCADE)
+    deadLine = models.DateTimeField()

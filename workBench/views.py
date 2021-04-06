@@ -5,6 +5,7 @@ from django.db.models import Count
 import json
 from configureDataBase.models.workBench import *
 from configureDataBase.models.vulnerabilityControler import *
+from configureDataBase.models.warningNotice import *
 
 
 # Create your views here.
@@ -70,8 +71,13 @@ def scheduleDetailView(request):
 
 
 def warningNotice(request):
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
+        pass
     return render(request, 'workBench/warningNotice.html', )
 
 
 def warningNoticeDetail(request):
+
     return None
