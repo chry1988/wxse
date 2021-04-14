@@ -23,8 +23,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary">暂缓修复</button>
-                    <button type="button" class="btn btn-primary">修复完成</button>
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-primary" id="waitingtofix">暂缓修复</button>
+                    <button type="button" class="btn btn-primary" id="fixed">修复完成</button>
                 </div>
             </div>
         </div>
@@ -112,7 +113,25 @@
 {% block customerjs %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $("button ").click(function () {
+            $("button[id=waitingtofix]").click(function () {
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                data = {
+                    csrftoken: csrftoken,
+                    action: 0,
+                };
+                $.post("/workbench/todomattersdetail", data, function (result) {
+                })
+            });
+            $("button[id=fixed]").click(function () {
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                data = {
+                    csrftoken: csrftoken,
+                    action: 1,
+                };
+                $.post("/workbench/todomattersdetail", data, function (result) {
+                })
+            });
+            $("td button").click(function () {
                 var tid = $(this).data("tid");
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                 data = {
@@ -120,7 +139,7 @@
                 };
                 $.get("/workbench/todomattersdetail", data, function (result) {
                     var jsonarray = $.parseJSON(result);
-                    {#alert(jsonarray);#}
+                    {#alert(jsonarray['queryProfessionsalWrokResult']);#}
                     $("#vunerabilityname").text(jsonarray['queryResult'][0]['name']);
                     $("#vunerabilitydetail").text(jsonarray['queryResult'][0]['detail']);
                     $("#vunerabilitylevel").text(jsonarray['queryResult'][0]['level']);

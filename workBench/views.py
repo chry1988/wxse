@@ -47,7 +47,7 @@ def toDoMattersDetail(request):
     if request.method == 'GET':
         searchId = request.GET.get('tid')
         targetUser = request.user.id
-        queryResult = vulnerability.objects.filter(userschedulecontroler__id=searchId).values(
+        queryResult = vulnerability.objects.filter(userschedulecontroler=searchId).values(
             'name',
             'detail',
             'level',
@@ -56,16 +56,16 @@ def toDoMattersDetail(request):
             'cnnvd_num',
             'dtime',
         )
-        queryIPResult = IpV4.objects.filter(userschedulecontroler__id=searchId).values(
+        queryIPResult = IpV4.objects.filter(userschedulecontroler=searchId).values(
             'ip',
             'area',
         )
-        queryProfessionsalWrokResult = professionalWork.objects.filter(userschedulecontroler__id=searchId).values(
+        queryProfessionsalWrokResult = professionalWork.objects.filter(relationVulnerability=searchId).values(
             'workName',
             'priorityLevel',
         )
-        result = json.dumps({'queryResult': list(queryResult), 'queryIPResult': queryIPResult,
-                             'queryProfessionsalWrokResult': queryProfessionsalWrokResult}, cls=DjangoJSONEncoder)
+        result = json.dumps({'queryResult': list(queryResult), 'queryIPResult': list(queryIPResult),
+                             'queryProfessionsalWrokResult': list(queryProfessionsalWrokResult)}, cls=DjangoJSONEncoder)
         return HttpResponse(result)
     else:
         return None
