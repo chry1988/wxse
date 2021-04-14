@@ -26,7 +26,20 @@ def myWorkBench(request):
 
 def toDoMatters(request):
     targetUser = request.user.id
-    toDoTasks = userScheduleControler.objects.filter(taskUser=targetUser, status='已下发')
+    toDoTasks = userScheduleControler.objects.filter(taskUser=targetUser, status='已下发').values(
+        'id',
+        'taskVulnerability__id',
+        'taskVulnerability__name',
+        'taskVulnerability__detail',
+        'taskVulnerability__level',
+        'taskVulnerability__repair_method',
+        'taskVulnerability__cve_num',
+        'taskVulnerability__cnnvd_num',
+        'taskVulnerability__dtime',
+        'taskVulnerability__professionalwork__workName',
+        'taskAffectIP__ip'
+    )
+    print(toDoTasks)
     return render(request, 'workBench/toDoMatters.html', {'toDoTasks': toDoTasks, })
 
 
@@ -43,7 +56,16 @@ def toDoMattersDetail(request):
             'cnnvd_num',
             'dtime',
         )
-        result = json.dumps({'queryResult': list(queryResult)}, cls=DjangoJSONEncoder)
+        queryIPResult = IpV4.objects.filter(userschedulecontroler__id=searchId).values(
+            'ip',
+            'area',
+        )
+        queryProfessionsalWrokResult = professionalWork.objects.filter(userschedulecontroler__id=searchId).values(
+            'workName',
+            'priorityLevel',
+        )
+        result = json.dumps({'queryResult': list(queryResult), 'queryIPResult': queryIPResult,
+                             'queryProfessionsalWrokResult': queryProfessionsalWrokResult}, cls=DjangoJSONEncoder)
         return HttpResponse(result)
     else:
         return None
@@ -72,12 +94,35 @@ def scheduleDetailView(request):
 
 def warningNotice(request):
     if request.method == 'GET':
-        pass
+        warningNoticeResult = NoticeDetial.objects.all()
+        return render(request, 'workBench/warningNotice.html', {'warningNoticeResult': warningNoticeResult, })
     elif request.method == 'POST':
-        pass
+
+        noticeName = models.CharField(max_length=255, verbose_name='通告名称')
+        noticeDate = models.DateTimeField(verbose_name='通告时间')
+        noyiceStaff = models.CharField(max_length=255, verbose_name='通告人员')
+        noticeLevel = models.CharField(max_length=255, verbose_name='严重级别')
+        CVEserialNumber = models.CharField(max_length=255, verbose_name='CVE编号')
+        CNNVDserialNumber = models.CharField(max_length=255, verbose_name='CNNVD编号')
+        affectedVendor = models.CharField(max_length=255, verbose_name='影响厂商')
+        affectedComponent = models.CharField(max_length=255, verbose_name='影响组件')
+        noticeDetail = models.TextField(verbose_name='通告描述')
     return render(request, 'workBench/warningNotice.html', )
 
 
 def warningNoticeDetail(request):
+    if request.method == 'GET':
+        warningNoticeResult = NoticeDetial.objects.all()
+        return render(request, 'workBench/warningNotice.html', {'warningNoticeResult': warningNoticeResult, })
+    elif request.method == 'POST':
 
-    return None
+        noticeName = models.CharField(max_length=255, verbose_name='通告名称')
+        noticeDate = models.DateTimeField(verbose_name='通告时间')
+        noyiceStaff = models.CharField(max_length=255, verbose_name='通告人员')
+        noticeLevel = models.CharField(max_length=255, verbose_name='严重级别')
+        CVEserialNumber = models.CharField(max_length=255, verbose_name='CVE编号')
+        CNNVDserialNumber = models.CharField(max_length=255, verbose_name='CNNVD编号')
+        affectedVendor = models.CharField(max_length=255, verbose_name='影响厂商')
+        affectedComponent = models.CharField(max_length=255, verbose_name='影响组件')
+        noticeDetail = models.TextField(verbose_name='通告描述')
+    return render(request, 'workBench/warningNotice.html', )

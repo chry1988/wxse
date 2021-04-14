@@ -1,6 +1,8 @@
 from django.contrib import admin
 from .models.workBench import userScheduleControler, adminScheduleControler
-from .models.vulnerabilityControler import vulnerability
+from .models.vulnerabilityControler import vulnerability, professionalWork
+from .models.warningNotice import NoticeDetial
+from .models.internetProtocolPool import IpV4
 
 
 class userScheduleControlerAdmin(admin.ModelAdmin):
@@ -22,3 +24,24 @@ class vulnerabilityAdmin(admin.ModelAdmin):
 
 
 admin.site.register(vulnerability, vulnerabilityAdmin)
+
+
+class professionalWorkAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(professionalWork, professionalWorkAdmin)
+
+
+class NoticeDetialAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(NoticeDetial, NoticeDetialAdmin)
+
+
+class IpV4Admin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(IpV4, IpV4Admin)

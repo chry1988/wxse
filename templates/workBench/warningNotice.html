@@ -108,21 +108,24 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <th scope="col">通告编号</th>
-            <th scope="col">通告时间</th>
-            <th scope="col">通告名称</th>
-            <th scope="col">严重级别</th>
-            <th scope="col">CVE编号</th>
-            <th scope="col">CNNVD编号</th>
-            <th scope="col">影响厂商</th>
-            <td>
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    查看详情
-                </button>
-            </td>
-        </tr>
+        {% for item in warningNoticeResult %}
+            <tr>
+                <th scope="col">{{ item.id }}</th>
+                <th scope="col">{{ item.noticeDate }}</th>
+                <th scope="col">{{ item.noticeName }}</th>
+                <th scope="col">{{ item.noticeLevel }}</th>
+                <th scope="col">{{ item.CVEserialNumber }}</th>
+                <th scope="col">{{ item.CNNVDserialNumber }}</th>
+                <th scope="col">{{ item.affectedVendor }}</th>
+                <td>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop">
+                        查看详情
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 {% endblock %}
