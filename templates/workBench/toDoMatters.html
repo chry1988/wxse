@@ -22,10 +22,13 @@
                     </text>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                    {% csrf_token %}
-                    <button type="button" class="btn btn-primary" id="waitingtofix">暂缓修复</button>
-                    <button type="button" class="btn btn-primary" id="fixed">修复完成</button>
+                    <form action="/workbench/todomatters" method="post">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" id="waitingtofix" data-modify='actions'>暂缓修复
+                        </button>
+                        <button type="button" class="btn btn-primary" id="fixed" data-modify='actions'>修复完成</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -113,26 +116,37 @@
 {% block customerjs %}
     <script type="text/javascript">
         $(document).ready(function () {
+
+            $.ajaxSetup({
+                headers:
+                    {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
+            });
             $("button[id=waitingtofix]").click(function () {
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                var tid = $(this).data("tid");
                 data = {
                     csrftoken: csrftoken,
                     action: 0,
+                    tid: tid,
                 };
-                $.post("/workbench/todomattersdetail", data, function (result) {
+                $.post("/workbench/todomatters", data, function (result) {
                 })
             });
             $("button[id=fixed]").click(function () {
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                {#var csrftoken = Cookies.get('csrftoken');#}
+                var tid = $(this).data("tid");
                 data = {
                     csrftoken: csrftoken,
                     action: 1,
+                    tid: tid,
                 };
-                $.post("/workbench/todomattersdetail", data, function (result) {
+                $.post("/workbench/todomatters", data, function (result) {
                 })
             });
             $("td button").click(function () {
                 var tid = $(this).data("tid");
+                $("button[data-modify='actions']").attr('data-tid', tid);
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                 data = {
                     tid: tid,

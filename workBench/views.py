@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
+from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
 from django.db.models import Count
 import json
@@ -15,34 +16,50 @@ def myWorkBench(request):
     :return:
     '''
     targetUser = request.user.id
-    upComingTasks = userScheduleControler.objects.filter(taskUser=targetUser, status='已下发').count()
+    upComingTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=2).count()
     if upComingTasks == 0:
         upComingTasks = '目前没有代办任务'
     else:
         upComingTasks = '目前有' + str(upComingTasks) + '代办任务'
-    finishTasks = userScheduleControler.objects.filter(taskUser=targetUser, status='已完成').count()
+    finishTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=7).count()
     return render(request, 'workBench/myWorkBench.html', {'upcomingTasks': upComingTasks, 'finishTasks': finishTasks})
 
-
+# @csrf_protect
 def toDoMatters(request):
-    targetUser = request.user.id
-    toDoTasks = userScheduleControler.objects.filter(taskUser=targetUser, status='已下发').values(
-        'id',
-        'taskVulnerability__id',
-        'taskVulnerability__name',
-        'taskVulnerability__detail',
-        'taskVulnerability__level',
-        'taskVulnerability__repair_method',
-        'taskVulnerability__cve_num',
-        'taskVulnerability__cnnvd_num',
-        'taskVulnerability__dtime',
-        'taskVulnerability__professionalwork__workName',
-        'taskAffectIP__ip'
-    )
-    print(toDoTasks)
-    return render(request, 'workBench/toDoMatters.html', {'toDoTasks': toDoTasks, })
+    if request.method == 'GET':
+        targetUser = request.user.id
+        toDoTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=2).values(
+            'id',
+            'taskVulnerability__id',
+            'taskVulnerability__name',
+            'taskVulnerability__detail',
+            'taskVulnerability__level',
+            'taskVulnerability__repair_method',
+            'taskVulnerability__cve_num',
+            'taskVulnerability__cnnvd_num',
+            'taskVulnerability__dtime',
+            'taskVulnerability__professionalwork__workName',
+            'taskAffectIP__ip'
+        )
+        print(toDoTasks)
+        return render(request, 'workBench/toDoMatters.html', {'toDoTasks': toDoTasks, })
+    elif request.method == 'POST':
+        doAction = request.POST.get('action')
+        userScheduleControlerID = request.POST.get('tid')
+        targetUser = request.user.id
+        doResult = userScheduleControler.objects.get(id=userScheduleControlerID)
+        print(doResult.id)
+        doAction=int(doAction)
+        if doAction == 0:
+            doResult.status = 4
+            doResult.save()
+        elif doAction == 1:
+            doResult.status = 3
+            doResult.save()
+        return HttpResponse('success')
 
 
+# @csrf_protect
 def toDoMattersDetail(request):
     if request.method == 'GET':
         searchId = request.GET.get('tid')
@@ -67,19 +84,29 @@ def toDoMattersDetail(request):
         result = json.dumps({'queryResult': list(queryResult), 'queryIPResult': list(queryIPResult),
                              'queryProfessionsalWrokResult': list(queryProfessionsalWrokResult)}, cls=DjangoJSONEncoder)
         return HttpResponse(result)
-    else:
+    elif request.method == 'POST':
+        doAction = request.POST.get('action')
+        userScheduleControlerID = request.POST.get('tid')
+        targetUser = request.user.id
+        doResult = userScheduleControler.objects.get(id=userScheduleControlerID)
+        if doAction == 0:
+            doResult.status = 4
+            doResult.save()
+        elif doAction == 1:
+            doResult.status = 3
+            doResult.save()
         return None
 
 
 def finishMatters(request):
     targetUser = request.user.id
-    finishTasks = userScheduleControler.objects.filter(taskUser=targetUser, status='已修复')
+    finishTasks = userScheduleControler.objects.filter(taskUser=targetUser, status__gte=3)
     return render(request, 'workBench/finishMatters.html', {'finishTasks': finishTasks, })
 
 
 def closingMatters(request):
     targetUser = request.user.id
-    closingTasks = userScheduleControler.objects.filter(taskUser=targetUser, status='已完成')
+    closingTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=7)
     return render(request, 'workBench/closingMatters.html', {'closingTasks': closingTasks})
 
 

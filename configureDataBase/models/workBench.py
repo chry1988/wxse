@@ -7,7 +7,7 @@ from customUser.models import wxseUser
 
 
 class userScheduleControler(models.Model):
-    status = models.CharField(choices=userScheduleControlerChoices, max_length=50)
+    status = models.IntegerField(choices=userScheduleControlerChoices, )
     taskVulnerability = models.ForeignKey(vulnerability, on_delete=models.DO_NOTHING)
     taskUser = models.ForeignKey(wxseUser, on_delete=models.CASCADE)
     deadLine = models.DateTimeField(default=None, blank=True)
@@ -15,7 +15,7 @@ class userScheduleControler(models.Model):
 
 
 class adminScheduleControler(models.Model):
-    status = models.CharField(choices=adminScheduleControlerChoices, max_length=50)
+    status = models.IntegerField(choices=adminScheduleControlerChoices, )
     taskVulnerability = models.ForeignKey(vulnerability, on_delete=models.DO_NOTHING)
     taskUser = models.ForeignKey(wxseUser, on_delete=models.CASCADE)
     deadLine = models.DateTimeField(default=datetime.now, blank=True)
