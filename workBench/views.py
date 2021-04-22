@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, InvalidPage
 from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
 from django.db.models import Count
@@ -29,6 +30,7 @@ def myWorkBench(request):
 def toDoMatters(request):
     if request.method == 'GET':
         targetUser = request.user.id
+        page = request.GET.get('page')
 
         toDoTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=2).values(
             'id',
@@ -43,8 +45,24 @@ def toDoMatters(request):
             'taskVulnerability__professionalwork__workName',
             'taskAffectIP__ip'
         )
-        print(toDoTasks)
-        return render(request, 'workBench/toDoMatters.html', {'toDoTasks': toDoTasks, })
+        toDtasksPage = Paginator(toDoTasks, 2)
+        if request.method == "GET":
+            # 获取 url 后面的 page 参数的值, 首页不显示 page 参数, 默认值是 1
+            page = request.GET.get('page')
+            try:
+                toDtasksPageObj = toDtasksPage.page(page)
+            # todo: 注意捕获异常
+            except PageNotAnInteger:
+                # 如果请求的页数不是整数, 返回第一页。
+                toDtasksPageObj = toDtasksPage.page(1)
+            except InvalidPage:
+                # 如果请求的页数不存在, 重定向页面
+                return HttpResponse('找不到页面的内容')
+            except EmptyPage:
+                # 如果请求的页数不在合法的页数范围内，返回结果的最后一页。
+                toDtasksPageObj = toDtasksPage.page(toDtasksPage.num_pages)
+
+        return render(request, 'workBench/toDoMatters.html', {'toDtasksPage': toDtasksPageObj, })
     elif request.method == 'POST':
         doAction = request.POST.get('action')
         userScheduleControlerID = request.POST.get('tid')
@@ -64,6 +82,7 @@ def toDoMatters(request):
 # @csrf_protect
 def toDoMattersDetail(request):
     if request.method == 'GET':
+
         searchId = request.GET.get('tid')
         targetUser = request.user.id
         queryResult = vulnerability.objects.filter(userschedulecontroler=searchId).values(
@@ -119,7 +138,6 @@ def finishMatters(request):
             7: ['已完成', '100%', '100'],
         }
         statusProgressValue = statusProgress[finishTasks[0]['status']]
-        print(statusProgressValue)
         result = json.dumps({'statusProgressValue': statusProgressValue, }, cls=DjangoJSONEncoder)
         return HttpResponse(result)
     else:

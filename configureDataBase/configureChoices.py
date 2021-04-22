@@ -19,3 +19,9 @@ adminScheduleControlerChoices = [
     (6, '已办结'),
     (7, '已完成',),
 ]
+
+vulnerabilityLevel = [
+    (0, '高危漏洞'),
+    (1, '中危漏洞'),
+    (2, '低危漏'),
+]

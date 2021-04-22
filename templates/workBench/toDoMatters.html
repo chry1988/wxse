@@ -12,17 +12,62 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <text id="vunerabilityname"></text>
-                    <text id="vunerabilitydetail"></text>
-                    <text id="vunerabilitylevel"></text>
-                    <text id="vunerabilityrepair_method"></text>
-                    <text id="vunerabilitycve_num"></text>
-                    <text id="vunerabilitycnnvd_num"></text>
-                    <text id="vunerabilitydtime"></text>
-                    </text>
+                    <table class="table table-bordered">
+                        <thead>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="table-active">漏洞名称</td>
+                            <td colspan="2">
+                                <text id="vunerabilityname"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">详细信息</td>
+                            <td colspan="2">
+                                <text id="vunerabilitydetail"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">漏洞级别</td>
+                            <td colspan="2">
+                                <text id="vunerabilitylevel"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">修复方法</td>
+                            <td colspan="2">
+                                <text id="vunerabilityrepair_method"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">CVE</td>
+                            <td colspan="2">
+                                <text id="vunerabilitycve_num"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">CNNVD</td>
+                            <td colspan="2">
+                                <text id="vunerabilitycnnvd_num"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">时间</td>
+                            <td colspan="2">
+                                <text id="vunerabilitydtime"></text>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="input-group">
+                        <span class="input-group-text">备注</span>
+                        <textarea class="form-control" aria-label="With textarea"></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <form action="/workbench/todomatters" method="post">
+
                         {% csrf_token %}
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
                         <button type="button" class="btn btn-primary" id="waitingtofix" data-modify='actions'>暂缓修复
@@ -53,7 +98,7 @@
             <input type="text" class="form-control" id="validationDefault02" placeholder="URL路径" required>
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="漏洞名称" required>
+            <input type="text" class="form-control" id="validationDefault03" placeholder="漏洞名称" required>
         </div>
         <div class="col-auto">
             <input type="text" class="form-control" id="validationDefault02" placeholder="影响业务" required>
@@ -70,7 +115,9 @@
         <div class="col-auto">
             <select class="form-select" id="validationDefault04" required>
                 <option selected disabled value="">请选择漏洞级别</option>
-                <option>...</option>
+                <option value="0">高危漏洞</option>
+                <option value="1">中危漏洞</option>
+                <option value="2">低危漏洞</option>
             </select>
         </div>
         <div class="col-auto">
@@ -93,7 +140,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for item in toDoTasks %}
+        {% for item in toDtasksPage %}
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
                 <td>{{ item.taskVulnerability__id }}</td>
@@ -112,6 +159,28 @@
         {% endfor %}
         </tbody>
     </table>
+    <nav aria-label="...">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+            </li>
+            <li class="page-item">
+                {% if toDtasksPage.has_previous %}
+                    <a class="page-link" href="?page={{ toDtasksPage.previous_page_number }}">previous</a>
+                {% endif %}
+            </li>
+            <li class="page-item"><a class="page-link"
+                                     href="?page={{ toDtasksPage.number  }}">{{ toDtasksPage.number  }}</a></li>
+            {% if toDtasksPage.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ toDtasksPage.next_page_number }}">next</a>
+                </li>
+            {% endif %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ toDtasksPage.paginator.num_pages }}"><span aria-hidden="true">&raquo;</span></a>
+            </li>
+        </ul>
+    </nav>
 {% endblock %}
 {% block customerjs %}
     <script type="text/javascript">
