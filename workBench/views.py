@@ -24,10 +24,12 @@ def myWorkBench(request):
     finishTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=7).count()
     return render(request, 'workBench/myWorkBench.html', {'upcomingTasks': upComingTasks, 'finishTasks': finishTasks})
 
+
 # @csrf_protect
 def toDoMatters(request):
     if request.method == 'GET':
         targetUser = request.user.id
+
         toDoTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=2).values(
             'id',
             'taskVulnerability__id',
@@ -49,7 +51,7 @@ def toDoMatters(request):
         targetUser = request.user.id
         doResult = userScheduleControler.objects.get(id=userScheduleControlerID)
         print(doResult.id)
-        doAction=int(doAction)
+        doAction = int(doAction)
         if doAction == 0:
             doResult.status = 4
             doResult.save()
@@ -100,7 +102,41 @@ def toDoMattersDetail(request):
 
 def finishMatters(request):
     targetUser = request.user.id
-    finishTasks = userScheduleControler.objects.filter(taskUser=targetUser, status__gte=3)
+
+    finishTaskID = request.GET.get('tid')
+    if finishTaskID:
+        finishTasks = userScheduleControler.objects.filter(taskUser=targetUser, id=finishTaskID).values(
+            'status',
+        )
+        statusProgress = {
+            0: ['录入', '10%', '10'],
+            1: ['已提交', '20%', '20'],
+            2: ['已下发', '30%', '30'],
+            3: ['已修复', '50%', '50'],
+            4: ['暂缓修复', '40%', '40'],
+            5: ['已校验', '80%', '80'],
+            6: ['已办结', '90%', '90'],
+            7: ['已完成', '100%', '100'],
+        }
+        statusProgressValue = statusProgress[finishTasks[0]['status']]
+        print(statusProgressValue)
+        result = json.dumps({'statusProgressValue': statusProgressValue, }, cls=DjangoJSONEncoder)
+        return HttpResponse(result)
+    else:
+        finishTasks = userScheduleControler.objects.filter(taskUser=targetUser, status__gte=3).values(
+            'id',
+            'taskVulnerability__id',
+            'taskVulnerability__name',
+            'taskVulnerability__detail',
+            'taskVulnerability__level',
+            'taskVulnerability__repair_method',
+            'taskVulnerability__cve_num',
+            'taskVulnerability__cnnvd_num',
+            'taskVulnerability__dtime',
+            'taskVulnerability__professionalwork__workName',
+            'taskAffectIP__ip'
+        )
+
     return render(request, 'workBench/finishMatters.html', {'finishTasks': finishTasks, })
 
 

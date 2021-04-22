@@ -8,15 +8,23 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">进度情况</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    ...
+                    <div class="progress">
+                        <div id="progress-test" class="progress-bar" role="progressbar" style="width: 55%;"
+                             aria-valuenow="25"
+                             aria-valuemin="0"
+                             aria-valuemax="100"></div>
+                    </div>
+                    <div>
+                        <p id = "progress-value"></p>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Understood</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+{#                    <button type="button" class="btn btn-primary">Understood</button>#}
                 </div>
             </div>
         </div>
@@ -89,9 +97,19 @@
         <tbody>
         {% for item in finishTasks %}
             <tr>
-                <td>{{ item.taskVulnerability.name }}</td>
-                <td>{{ item.taskVulnerability.level }}</td>
-                <td>{{ item.taskVulnerability.repair_method }}</td>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ item.taskVulnerability__id }}</td>
+                <td>{{ item.taskVulnerability__name }}</td>
+                <td>{{ item.taskVulnerability__professionalwork__workName }}</td>
+                <td>{{ item.taskVulnerability__level }}</td>
+                <td>{{ item.taskAffectIP__ip }}</td>
+                <td>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop" data-tid="{{ item.id }}">
+                        查看详情
+                    </button>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
@@ -100,11 +118,26 @@
 {% block customerjs %}
     <script type="text/javascript">
         $(document).ready(function () {
-            var myModal = document.getElementById('myModal')
-            var myInput = document.getElementById('myInput')
-            myModal.addEventListener('shown.bs.modal', function () {
-                myInput.focus()
-            })
+            $("td button").click(function () {
+                var tid = $(this).data("tid");
+                $("button[data-modify='actions']").attr('data-tid', tid);
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                data = {
+                    tid: tid,
+                };
+                $.get("/workbench/finishmatters", data, function (result) {
+                    var jsonarray = $.parseJSON(result);
+
+                    var progressBarStatus = jsonarray['statusProgressValue'][0];
+                    var progressBarWidth = jsonarray['statusProgressValue'][1];
+                    var progressAriaValuenow = jsonarray['statusProgressValue'][2];
+                    $("div.progress-bar").css({"width": progressBarWidth, "aria-valuenow": progressAriaValuenow});
+                    $("#progress-value").text(progressBarStatus);
+
+                })
+            });
+
+
         })
     </script>
 {% endblock %}
