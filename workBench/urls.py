@@ -11,5 +11,6 @@ urlpatterns = [
     path('vulnerabilitydetailview', views.vulnerabilityDetailView),
     path('scheduledetailview', views.scheduleDetailView),
     path('warningnotice', views.warningNotice),
+    path('warningnotice/add', views.warningNoticeAdd),
     path('warningnoticedetail', views.warningNoticeDetail),
 ]
