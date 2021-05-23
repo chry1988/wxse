@@ -1,77 +1,4 @@
 {% extends "mainHtml.html" %}
-{% block customermodle %}
-
-
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">查看</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="row g-3">
-                        <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">通告名称</label>
-                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
-                                   disabled readonly>
-                        </div>
-                        <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">严重级别</label>
-                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
-                                   required>
-                        </div>
-                        <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">CVE编号</label>
-                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
-                                   disabled readonly>
-                        </div>
-                        <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">CNNVD编号</label>
-                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
-                                   required>
-                        </div>
-                        <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">影响厂商</label>
-                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
-                                   disabled readonly>
-                        </div>
-                        <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">影响组件</label>
-                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
-                                   required>
-                        </div>
-                        <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">通告时间</label>
-                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
-                                   disabled readonly>
-                        </div>
-                        <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">通告人员</label>
-                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
-                                   required>
-                        </div>
-                        <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">通告描述</label>
-                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
-                                   disabled readonly>
-                        </div>
-                        <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">附件</label>
-                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
-                                   required>
-                        </div>
-                        <div class="col-auto">
-                            <button class="btn btn-primary" type="submit">下载</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
 {% block content %}
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
@@ -88,23 +15,23 @@
             <input type="text" class="form-control" id="validationDefault01" placeholder="通告编号" required>
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="通告时间" required>
+            <input type="text" class="form-control" id="datetimepicker01" placeholder="通告时间" required>
         </div>
-         <div class="col-auto">
+        <div class="col-auto">
 
             <input type="text" class="form-control" id="validationDefault01" placeholder="通告名称" required>
         </div>
         <div class="col-auto">
             <input type="text" class="form-control" id="validationDefault02" placeholder="严重级别" required>
         </div>
-           <div class="col-auto">
+        <div class="col-auto">
 
             <input type="text" class="form-control" id="validationDefault01" placeholder="CVE编号" required>
         </div>
         <div class="col-auto">
             <input type="text" class="form-control" id="validationDefault02" placeholder="CNNVD编号" required>
         </div>
-         <div class="col-auto">
+        <div class="col-auto">
 
             <input type="text" class="form-control" id="validationDefault01" placeholder="影响厂商" required>
         </div>
@@ -116,11 +43,14 @@
 {% block customerjs %}
     <script type="text/javascript">
         $(document).ready(function () {
-            var myModal = document.getElementById('myModal')
-            var myInput = document.getElementById('myInput')
-            myModal.addEventListener('shown.bs.modal', function () {
-                myInput.focus()
-            })
+            $('#datetimepicker01').datetimepicker({
+                forceParse:0,
+                format: 'yyyy/mm/dd hh:mm:ss',
+                language: 'zh-CN',
+                pickTime: false,
+                initialDate:new Date(),
+                todayBtn:true,
+            });
         })
     </script>
 {% endblock %}
