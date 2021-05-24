@@ -10,46 +10,101 @@
         </nav>
     </div>
     <form class="row g-3">
-        <div class="col-auto">
-
-            <input type="text" class="form-control" id="validationDefault01" placeholder="通告编号" required>
+        {% csrf_token %}
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="noticeNum" class="col-form-label">通告编号</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" id="noticeNum" class="form-control">
+            </div>
+            <div class="col-auto">
+                <label for="noticeDate" class="col-form-label">通告时间</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="noticeDate" placeholder="通告时间" required>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="noticeName" class="col-form-label">通告名称</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="noticeName" placeholder="通告名称" required>
+            </div>
+            <div class="col-auto">
+                <label for="noticeLevel" class="col-form-label">严重级别</label>
+            </div>
+            <div class="col-auto">
+                <select class="form-select" aria-label="Default select example" id="noticeLevel">
+                    <option selected disabled value="">请选择漏洞级别</option>
+                    <option value="0">高危漏洞</option>
+                    <option value="1">中危漏洞</option>
+                    <option value="2">低危漏洞</option>
+                </select>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="CVEserialNumber" class="col-form-label">CVE编号</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="CVEserialNumber" placeholder="CVE编号" required>
+            </div>
+            <div class="col-auto">
+                <label for="CNNVDserialNumber" class="col-form-label">CNNVD编号</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="CNNVDserialNumber" placeholder="CNNVD编号" required>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="affectedVendor" class="col-form-label">影响厂商</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="affectedVendor" placeholder="影响厂商" required>
+            </div>
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="datetimepicker01" placeholder="通告时间" required>
-        </div>
-        <div class="col-auto">
-
-            <input type="text" class="form-control" id="validationDefault01" placeholder="通告名称" required>
-        </div>
-        <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="严重级别" required>
-        </div>
-        <div class="col-auto">
-
-            <input type="text" class="form-control" id="validationDefault01" placeholder="CVE编号" required>
-        </div>
-        <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="CNNVD编号" required>
-        </div>
-        <div class="col-auto">
-
-            <input type="text" class="form-control" id="validationDefault01" placeholder="影响厂商" required>
-        </div>
-        <div class="col-auto">
-            <button class="btn btn-primary" type="submit">新增</button>
+            <button id="warningNoticeAdd" class="btn btn-primary" type="submit">新增</button>
         </div>
     </form>
 {% endblock %}
 {% block customerjs %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#datetimepicker01').datetimepicker({
-                forceParse:0,
-                format: 'yyyy/mm/dd hh:mm:ss',
+            $('#noticeDate').datetimepicker({
+                forceParse: 0,
+                format: 'yyyy-mm-dd hh:mm:ss',
                 language: 'zh-CN',
                 pickTime: false,
-                initialDate:new Date(),
-                todayBtn:true,
+                initialDate: new Date(),
+                todayBtn: true,
+            });
+            $("button[id=warningNoticeAdd]").click(function () {
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                var noticeNum = $("#noticeNum").val();
+                var noticeName = $("#noticeName").val();
+                var noticeDate = $("#noticeDate").val();
+                var noticeLevel = $("#noticeLevel").val();
+                var CVEserialNumber = $("#CVEserialNumber").val();
+                var CNNVDserialNumber = $("#CNNVDserialNumber").val();
+                var affectedVendor = $("#affectedVendor").val();
+                {#var affectedComponent = $("#programChannel").val();#}
+                {#var noticeDetail = $("#isLive").is(':checked');#}
+                data = {
+                    csrftoken: csrftoken,
+                    noticeNum: noticeNum,
+                    noticeName:noticeName,
+                    noticeDate: noticeDate,
+                    noticeLevel: noticeLevel,
+                    CVEserialNumber: CVEserialNumber,
+                    CNNVDserialNumber: CNNVDserialNumber,
+                    affectedVendor: affectedVendor,
+                };
+                $.post("/workbench/warningnotice/add", data, function (result) {
+                })
             });
         })
     </script>

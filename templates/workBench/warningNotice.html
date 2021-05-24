@@ -14,28 +14,28 @@
                 <div class="modal-body">
                     <form class="row g-3">
                         <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">通告名称</label>
-                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
+                            <label for="noticeName" class="form-label">通告名称</label>
+                            <input type="text" class="form-control" id="noticeName" placeholder="漏洞编号"
                                    disabled readonly>
                         </div>
                         <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">严重级别</label>
-                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
+                            <label for="noticeLevel" class="form-label">严重级别</label>
+                            <input type="text" class="form-control" id="noticeLevel" placeholder="通告名称"
                                    required>
                         </div>
                         <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">CVE编号</label>
-                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
+                            <label for="CVEserialNumber" class="form-label">CVE编号</label>
+                            <input type="text" class="form-control" id="CVEserialNumber" placeholder="漏洞编号"
                                    disabled readonly>
                         </div>
                         <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">CNNVD编号</label>
-                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
+                            <label for="CNNVDserialNumber" class="form-label">CNNVD编号</label>
+                            <input type="text" class="form-control" id="CNNVDserialNumber" placeholder="通告名称"
                                    required>
                         </div>
                         <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">影响厂商</label>
-                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
+                            <label for="affectedVendor" class="form-label">影响厂商</label>
+                            <input type="text" class="form-control" id="affectedVendor" placeholder="漏洞编号"
                                    disabled readonly>
                         </div>
                         <div class="col-auto">
@@ -44,8 +44,8 @@
                                    required>
                         </div>
                         <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">通告时间</label>
-                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
+                            <label for="noticeDate" class="form-label">通告时间</label>
+                            <input type="text" class="form-control" id="noticeDate" placeholder="漏洞编号"
                                    disabled readonly>
                         </div>
                         <div class="col-auto">
@@ -82,16 +82,16 @@
             </ol>
         </nav>
     </div>
-    <form class="row g-3">
+    <form class="row g-3" action="/workbench/warningnotice" method="get">
         <div class="col-auto">
 
-            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号" required>
+            <input type="text" class="form-control" id="validationDefault01" name="noticeNumQuery" placeholder="漏洞编号" >
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称" required>
+            <input type="text" class="form-control" id="validationDefault02" name="noticeNameQuery" placeholder="通告名称" >
         </div>
         <div class="col-auto">
-            <button class="btn btn-primary" type="submit">查询</button>
+            <button class="btn btn-primary" type="submit" id="queryDetail">查询</button>
         </div>
     </form>
     <table class="table table-striped table-hover">
@@ -120,7 +120,7 @@
                 <td>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop">
+                            data-bs-target="#staticBackdrop" data-wid="{{ item.id }}">
                         查看详情
                     </button>
                 </td>
@@ -134,6 +134,25 @@
         $(document).ready(function () {
             var myModal = document.getElementById('myModal')
             var myInput = document.getElementById('myInput')
+
+            $("td button").click(function () {
+                var wid = $(this).data("wid");
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                data = {
+                    csrfmiddlewaretoken: csrftoken,
+                    wid: wid,
+                };
+                $.post("/workbench/warningnotice", data, function (result) {
+                    var jsonarray = $.parseJSON(result);
+                    $("#noticeNum").text(jsonarray['queryresult'][0]['noticeNum']);
+                    $("#noticeName").val(jsonarray['queryresult'][0]['noticeName']);
+                    $("#noticeDate").val(jsonarray['queryresult'][0]['noticeDate']);
+                    $("#noticeLevel").val(jsonarray['queryresult'][0]['noticeLevel']);
+                    $("#CVEserialNumber").val(jsonarray['queryresult'][0]['CVEserialNumber']);
+                    $("#CNNVDserialNumber").val(jsonarray['queryresult'][0]['CNNVDserialNumber']);
+                    $("#affectedVendor").val(jsonarray['queryresult'][0]['affectedVendor']);
+                })
+            });
             myModal.addEventListener('shown.bs.modal', function () {
                 myInput.focus()
             })

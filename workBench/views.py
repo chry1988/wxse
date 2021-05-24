@@ -175,20 +175,32 @@ def scheduleDetailView(request):
 
 def warningNotice(request):
     if request.method == 'GET':
-        warningNoticeResult = NoticeDetial.objects.all()
-        return render(request, 'workBench/warningNotice.html', {'warningNoticeResult': warningNoticeResult, })
-    elif request.method == 'POST':
+        noticeNumQuery = request.GET.get('noticeNumQuery')
+        noticeNameQuery = request.GET.get('noticeNameQuery')
 
-        noticeName = models.CharField(max_length=255, verbose_name='通告名称')
-        noticeDate = models.DateTimeField(verbose_name='通告时间')
-        noyiceStaff = models.CharField(max_length=255, verbose_name='通告人员')
-        noticeLevel = models.CharField(max_length=255, verbose_name='严重级别')
-        CVEserialNumber = models.CharField(max_length=255, verbose_name='CVE编号')
-        CNNVDserialNumber = models.CharField(max_length=255, verbose_name='CNNVD编号')
-        affectedVendor = models.CharField(max_length=255, verbose_name='影响厂商')
-        affectedComponent = models.CharField(max_length=255, verbose_name='影响组件')
-        noticeDetail = models.TextField(verbose_name='通告描述')
-    return render(request, 'workBench/warningNotice.html', )
+        if noticeNumQuery or noticeNameQuery:
+            warningNoticeResult = NoticeDetial.objects.filter(noticeName=noticeNameQuery)
+            return render(request, 'workBench/warningNotice.html', {'warningNoticeResult': warningNoticeResult, })
+        else:
+            warningNoticeResult = NoticeDetial.objects.all()
+            return render(request, 'workBench/warningNotice.html', {'warningNoticeResult': warningNoticeResult, })
+
+
+    elif request.method == 'POST':
+        noticeNum = request.POST.get('wid')
+        returnData = NoticeDetial.objects.filter(id=noticeNum).values(
+            'noticeName',
+            'noticeDate',
+            'noyiceStaff',
+            'noticeLevel',
+            'CVEserialNumber',
+            'CNNVDserialNumber',
+            'affectedVendor',
+            'affectedComponent',
+            'noticeDetail',
+        )
+        result = json.dumps({'queryresult': list(returnData), }, cls=DjangoJSONEncoder)
+        return HttpResponse(result)
 
 
 def warningNoticeDetail(request):
@@ -208,19 +220,31 @@ def warningNoticeDetail(request):
         noticeDetail = models.TextField(verbose_name='通告描述')
     return render(request, 'workBench/warningNotice.html', )
 
+
 def warningNoticeAdd(request):
     if request.method == 'GET':
         warningNoticeResult = NoticeDetial.objects.all()
         return render(request, 'workBench/warningNoticeAdd.html', {'warningNoticeResult': warningNoticeResult, })
     elif request.method == 'POST':
-
-        noticeName = models.CharField(max_length=255, verbose_name='通告名称')
-        noticeDate = models.DateTimeField(verbose_name='通告时间')
-        noyiceStaff = models.CharField(max_length=255, verbose_name='通告人员')
-        noticeLevel = models.CharField(max_length=255, verbose_name='严重级别')
-        CVEserialNumber = models.CharField(max_length=255, verbose_name='CVE编号')
-        CNNVDserialNumber = models.CharField(max_length=255, verbose_name='CNNVD编号')
-        affectedVendor = models.CharField(max_length=255, verbose_name='影响厂商')
-        affectedComponent = models.CharField(max_length=255, verbose_name='影响组件')
-        noticeDetail = models.TextField(verbose_name='通告描述')
+        noticeNum = request.POST.get('noticeNum')
+        noticeDate = request.POST.get('noticeDate')
+        noticeName = request.POST.get('noticeName')
+        noticeLevel = request.POST.get('noticeLevel')
+        CVEserialNumber = request.POST.get('CVEserialNumber')
+        CNNVDserialNumber = request.POST.get('CNNVDserialNumber')
+        affectedVendor = request.POST.get('affectedVendor')
+        print(noticeNum,
+              noticeDate,
+              noticeLevel,
+              CVEserialNumber,
+              affectedVendor, )
+        NoticeDetial.objects.create(
+            id=noticeNum,
+            noticeDate=noticeDate,
+            noticeName=noticeName,
+            noticeLevel=noticeLevel,
+            CVEserialNumber=CVEserialNumber,
+            CNNVDserialNumber=CNNVDserialNumber,
+            affectedVendor=affectedVendor,
+        )
     return render(request, 'workBench/warningNoticeAdd.html', )
