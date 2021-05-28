@@ -50,10 +50,10 @@
                 <input type="text" id="noticeNum" class="form-control">
             </div>
             <div class="col-auto">
-                <label for="noticeDate" class="col-form-label">截止时间</label>
+                <label for="deadline" class="col-form-label">截止时间</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control" id="noticeDate" placeholder="" required>
+                <input type="text" class="form-control" id="deadline" placeholder="">
             </div>
         </div>
 
@@ -95,7 +95,7 @@
                 <label for="noticeName" class="col-form-label">修复方式</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control" id="noticeName" placeholder="描述" required>
+                <textarea type="text" class="form-control" id="noticeName" rows="3"></textarea>
             </div>
 
         </div>
@@ -105,40 +105,49 @@
                 <label for="affectedVendor" class="col-form-label">关联人员</label>
             </div>
             <div class="col-auto">
-                <select class="form-select" aria-label="Default select example" id="noticeLevel">
-                    <option selected disabled value="">请选择</option>
-                    {% for users in userList %}
-                        <option value="{{ users.id }}">{{ users.last_name }}</option>
-                    {% endfor %}
-                </select>
+                {% for users in userList %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="{{ users.id }}" id="flexCheckChecked">
+                        <label class="form-check-label" for="flexCheckChecked">
+                            {{ users.last_name }}
+                        </label>
+                    </div>
+                {% endfor %}
             </div>
-        </div>
-        <div class="row g-3 align-items-center">
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="affectedVendor" class="col-form-label">影响厂商</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" class="form-control" id="affectedVendor" placeholder="影响厂商" required>
+                </div>
+            </div>
             <div class="col-auto">
-                <label for="affectedVendor" class="col-form-label">影响厂商</label>
+                <button id="releaseMattersAdd" class="btn btn-primary" type="submit">新增</button>
             </div>
-            <div class="col-auto">
-                <input type="text" class="form-control" id="affectedVendor" placeholder="影响厂商" required>
-            </div>
-        </div>
-        <div class="col-auto">
-            <button id="warningNoticeAdd" class="btn btn-primary" type="submit">新增</button>
-        </div>
     </form>
 {% endblock %}
 {% block customerjs %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $("td button").click(function () {
-                var tid = $(this).data("tid");
+            $('#deadline').datetimepicker({
+                forceParse: 0,
+                format: 'yyyy-mm-dd hh:mm:ss',
+                language: 'zh-CN',
+                pickTime: false,
+                initialDate: new Date(),
+                todayBtn: true,
+            });
+            $("#releaseMattersAdd").click(function () {
+
                 $("button[data-modify='actions']").attr('data-tid', tid);
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                 data = {
+
                     tid: tid,
                 };
                 $.get("/workbench/finishmatters", data, function (result) {
                     var jsonarray = $.parseJSON(result);
-
                     var progressBarStatus = jsonarray['statusProgressValue'][0];
                     var progressBarWidth = jsonarray['statusProgressValue'][1];
                     var progressAriaValuenow = jsonarray['statusProgressValue'][2];
@@ -147,8 +156,6 @@
 
                 })
             });
-
-
         })
     </script>
 {% endblock %}
