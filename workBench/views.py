@@ -8,9 +8,19 @@ import json
 from configureDataBase.models.workBench import *
 from configureDataBase.models.vulnerabilityControler import *
 from configureDataBase.models.warningNotice import *
+from customUser.models import *
 
 
 # Create your views here.
+def checkUserPrivileges(request, funRequest):
+    checkUser = request.user.id
+    checkPrivilege = wxseUser.objects.get(id=checkUser).userPrivilege
+    if checkPrivilege == 0:
+        return funRequest
+    else:
+        return HttpResponse('ban')
+
+
 def myWorkBench(request):
     '''
     :param request:
@@ -24,6 +34,25 @@ def myWorkBench(request):
         upComingTasks = '目前有' + str(upComingTasks) + '代办任务'
     finishTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=7).count()
     return render(request, 'workBench/myWorkBench.html', {'upcomingTasks': upComingTasks, 'finishTasks': finishTasks})
+
+
+def releaseMatters(request):
+    checkUser = request.user.id
+    checkPrivilege = wxseUser.objects.get(id=checkUser).userPrivilege
+    if checkPrivilege != 0:
+        return HttpResponse('ban')
+    if request.method == 'GET':
+        userList = wxseUser.objects.all().values('id', 'first_name', 'last_name')
+        return render(request, 'workBench/releaseMatters.html', {'userList': userList})
+    elif request.method == 'POST':
+        return None
+
+
+def checkMatters(request):
+    if request.method == 'GET':
+        return render(request, 'workBench/checkMatters.html')
+    elif request.method == 'POST':
+        return None
 
 
 # @csrf_protect

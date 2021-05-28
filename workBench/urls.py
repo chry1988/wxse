@@ -13,4 +13,6 @@ urlpatterns = [
     path('warningnotice', views.warningNotice),
     path('warningnotice/add', views.warningNoticeAdd),
     path('warningnoticedetail', views.warningNoticeDetail),
+    path('releasematters', views.releaseMatters),
+    path('checkmatters', views.checkMatters),
 ]

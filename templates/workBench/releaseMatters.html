@@ -1,0 +1,154 @@
+{% extends "mainHtml.html" %}
+{% block customermodle %}
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">进度情况</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                        <div id="progress-test" class="progress-bar" role="progressbar" style="width: 55%;"
+                             aria-valuenow="25"
+                             aria-valuemin="0"
+                             aria-valuemax="100"></div>
+                    </div>
+                    <div>
+                        <p id="progress-value"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    {#                    <button type="button" class="btn btn-primary">Understood</button>#}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">url1</a></li>
+                <li class="breadcrumb-item"><a href="#">url2</a></li>
+                <li class="breadcrumb-item active" aria-current="page">url3</li>
+            </ol>
+        </nav>
+    </div>
+    <form class="row g-3">
+        {% csrf_token %}
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="noticeNum" class="col-form-label">漏洞名称</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" id="noticeNum" class="form-control">
+            </div>
+            <div class="col-auto">
+                <label for="noticeDate" class="col-form-label">截止时间</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="noticeDate" placeholder="" required>
+            </div>
+        </div>
+
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="CVEserialNumber" class="col-form-label">CVE编号</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="CVEserialNumber" placeholder="CVE编号" required>
+            </div>
+            <div class="col-auto">
+                <label for="CNNVDserialNumber" class="col-form-label">CNNVD编号</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="CNNVDserialNumber" placeholder="CNNVD编号" required>
+            </div>
+            <div class="col-auto">
+                <label for="noticeLevel" class="col-form-label">严重级别</label>
+            </div>
+            <div class="col-auto">
+                <select class="form-select" aria-label="Default select example" id="noticeLevel">
+                    <option selected disabled value="">请选择漏洞级别</option>
+                    <option value="0">高危漏洞</option>
+                    <option value="1">中危漏洞</option>
+                    <option value="2">低危漏洞</option>
+                </select>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="noticeName" class="col-form-label">描述</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="noticeName" placeholder="描述" required>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="noticeName" class="col-form-label">修复方式</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="noticeName" placeholder="描述" required>
+            </div>
+
+        </div>
+
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="affectedVendor" class="col-form-label">关联人员</label>
+            </div>
+            <div class="col-auto">
+                <select class="form-select" aria-label="Default select example" id="noticeLevel">
+                    <option selected disabled value="">请选择</option>
+                    {% for users in userList %}
+                        <option value="{{ users.id }}">{{ users.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="affectedVendor" class="col-form-label">影响厂商</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="affectedVendor" placeholder="影响厂商" required>
+            </div>
+        </div>
+        <div class="col-auto">
+            <button id="warningNoticeAdd" class="btn btn-primary" type="submit">新增</button>
+        </div>
+    </form>
+{% endblock %}
+{% block customerjs %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("td button").click(function () {
+                var tid = $(this).data("tid");
+                $("button[data-modify='actions']").attr('data-tid', tid);
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                data = {
+                    tid: tid,
+                };
+                $.get("/workbench/finishmatters", data, function (result) {
+                    var jsonarray = $.parseJSON(result);
+
+                    var progressBarStatus = jsonarray['statusProgressValue'][0];
+                    var progressBarWidth = jsonarray['statusProgressValue'][1];
+                    var progressAriaValuenow = jsonarray['statusProgressValue'][2];
+                    $("div.progress-bar").css({"width": progressBarWidth, "aria-valuenow": progressAriaValuenow});
+                    $("#progress-value").text(progressBarStatus);
+
+                })
+            });
+
+
+        })
+    </script>
+{% endblock %}
