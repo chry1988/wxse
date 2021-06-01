@@ -9,6 +9,7 @@ from configureDataBase.models.workBench import *
 from configureDataBase.models.vulnerabilityControler import *
 from configureDataBase.models.warningNotice import *
 from customUser.models import *
+import re
 
 
 # Create your views here.
@@ -45,7 +46,44 @@ def releaseMatters(request):
         userList = wxseUser.objects.all().values('id', 'first_name', 'last_name')
         return render(request, 'workBench/releaseMatters.html', {'userList': userList})
     elif request.method == 'POST':
-        return None
+        vulnerabilityName = request.POST.get('vulnerabilityName')
+        vulnerabilityDtime = request.POST.get('vulnerabilityDtime')
+        CVEserialNumber = request.POST.get('CVEserialNumber')
+        vulnerabilityDetail = request.POST.get('vulnerabilityDetail')
+        vulnerabilityLevel = request.POST.get('vulnerabilityLevel')
+        CNNVDserialNumber = request.POST.get('CNNVDserialNumber')
+        vulnerabilityrepairMethod = request.POST.get('vulnerabilityrepairMethod')
+        affectedVendor = request.POST.get('affectedVendor')
+        uids = request.POST.get('uids')
+
+        vulnerabilityObj = vulnerability.objects.get_or_create(
+            name=vulnerabilityName,
+            detail=vulnerabilityDetail,
+            dtime=vulnerabilityDtime,
+            repair_method=vulnerabilityrepairMethod,
+            cve_num=CVEserialNumber,
+            cnnvd_num=CNNVDserialNumber,
+            level=vulnerabilityLevel,
+            affectedVendor=affectedVendor,
+        )
+
+        class userScheduleControler(models.Model):
+            status = models.IntegerField(choices=userScheduleControlerChoices, )
+            taskVulnerability = models.ForeignKey(vulnerability, on_delete=models.DO_NOTHING)
+            taskUser = models.ForeignKey(wxseUser, on_delete=models.CASCADE)
+            deadLine = models.DateTimeField(default=None, blank=True)
+            taskAffectIP = models.ManyToManyField(IpV4, default=None, blank=True)
+
+        userList = re.split(uids, ',')
+        for uItem in userList:
+            targetUserScheduleControler = userScheduleControler.objects.create(
+                taskUser=uItem,
+                deadLine=vulnerabilityDtime,
+                taskVulnerability=vulnerabilityObj,
+                status=1,
+            )
+
+        return HttpResponse('ok')
 
 
 def checkMatters(request):
@@ -62,7 +100,7 @@ def checkMatters(request):
                 return HttpResponse('找不到页面的内容')
             except EmptyPage:
                 checkMattersListObj = checkMattersListPage.page(checkMattersListPage.num_pages)
-        return render(request, 'workBench/checkMatters.html',{'checkMattersListPage':checkMattersListObj})
+        return render(request, 'workBench/checkMatters.html', {'checkMattersListPage': checkMattersListObj})
 
     elif request.method == 'POST':
         return None

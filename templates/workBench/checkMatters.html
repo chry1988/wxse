@@ -151,17 +151,13 @@
                 };
                 $.get("/workbench/finishmatters", data, function (result) {
                     var jsonarray = $.parseJSON(result);
-
                     var progressBarStatus = jsonarray['statusProgressValue'][0];
                     var progressBarWidth = jsonarray['statusProgressValue'][1];
                     var progressAriaValuenow = jsonarray['statusProgressValue'][2];
                     $("div.progress-bar").css({"width": progressBarWidth, "aria-valuenow": progressAriaValuenow});
                     $("#progress-value").text(progressBarStatus);
-
                 })
             });
-
-
         })
     </script>
 {% endblock %}

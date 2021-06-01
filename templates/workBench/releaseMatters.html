@@ -44,19 +44,18 @@
         {% csrf_token %}
         <div class="row g-3 align-items-center">
             <div class="col-auto">
-                <label for="noticeNum" class="col-form-label">漏洞名称</label>
+                <label for="vulnerabilityName" class="col-form-label">漏洞名称</label>
             </div>
             <div class="col-auto">
-                <input type="text" id="noticeNum" class="form-control">
+                <input type="text" id="vulnerabilityName" class="form-control">
             </div>
             <div class="col-auto">
-                <label for="deadline" class="col-form-label">截止时间</label>
+                <label for="vulnerabilityDtime" class="col-form-label">截止时间</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control" id="deadline" placeholder="">
+                <input type="text" class="form-control" id="vulnerabilityDtime" placeholder="">
             </div>
         </div>
-
         <div class="row g-3 align-items-center">
             <div class="col-auto">
                 <label for="CVEserialNumber" class="col-form-label">CVE编号</label>
@@ -71,10 +70,10 @@
                 <input type="text" class="form-control" id="CNNVDserialNumber" placeholder="CNNVD编号" required>
             </div>
             <div class="col-auto">
-                <label for="noticeLevel" class="col-form-label">严重级别</label>
+                <label for="vulnerabilityLevel" class="col-form-label">严重级别</label>
             </div>
             <div class="col-auto">
-                <select class="form-select" aria-label="Default select example" id="noticeLevel">
+                <select class="form-select" aria-label="Default select example" id="vulnerabilityLevel">
                     <option selected disabled value="">请选择漏洞级别</option>
                     <option value="0">高危漏洞</option>
                     <option value="1">中危漏洞</option>
@@ -84,53 +83,53 @@
         </div>
         <div class="row g-3 align-items-center">
             <div class="col-auto">
-                <label for="noticeName" class="col-form-label">描述</label>
+                <label for="vulnerabilityDetail" class="col-form-label">描述</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control" id="noticeName" placeholder="描述" required>
+                <input type="text" class="form-control" id="vulnerabilityDetail" placeholder="描述" required>
             </div>
         </div>
         <div class="row g-3 align-items-center">
             <div class="col-auto">
-                <label for="noticeName" class="col-form-label">修复方式</label>
+                <label for="vulnerabilityrepairMethod" class="col-form-label">修复方式</label>
             </div>
             <div class="col-auto">
-                <textarea type="text" class="form-control" id="noticeName" rows="3"></textarea>
+                <textarea type="text" class="form-control" id="vulnerabilityrepairMethod" rows="3"></textarea>
             </div>
 
         </div>
-
         <div class="row g-3 align-items-center">
             <div class="col-auto">
-                <label for="affectedVendor" class="col-form-label">关联人员</label>
+                <label for="affectedStaff" class="col-form-label">关联人员</label>
             </div>
             <div class="col-auto">
                 {% for users in userList %}
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="{{ users.id }}" id="flexCheckChecked">
-                        <label class="form-check-label" for="flexCheckChecked">
+                        <input class="form-check-input" type="checkbox" value="{{ users.id }}" id="{{ users.id }}">
+                        <label class="form-check-label" for="{{ users.id }}">
                             {{ users.last_name }}
                         </label>
                     </div>
                 {% endfor %}
             </div>
-            <div class="row g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="affectedVendor" class="col-form-label">影响厂商</label>
-                </div>
-                <div class="col-auto">
-                    <input type="text" class="form-control" id="affectedVendor" placeholder="影响厂商" required>
-                </div>
+        </div>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="affectedVendor" class="col-form-label">影响厂商</label>
             </div>
             <div class="col-auto">
-                <button id="releaseMattersAdd" class="btn btn-primary" type="submit">新增</button>
+                <input type="text" class="form-control" id="affectedVendor" placeholder="影响厂商" required>
             </div>
+        </div>
+        <div class="col-auto">
+            <button id="releaseMattersAdd" class="btn btn-primary" type="submit">新增</button>
+        </div>
     </form>
 {% endblock %}
 {% block customerjs %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#deadline').datetimepicker({
+            $('#vulnerabilityDtime').datetimepicker({
                 forceParse: 0,
                 format: 'yyyy-mm-dd hh:mm:ss',
                 language: 'zh-CN',
@@ -139,21 +138,34 @@
                 todayBtn: true,
             });
             $("#releaseMattersAdd").click(function () {
-
-                $("button[data-modify='actions']").attr('data-tid', tid);
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+                var vulnerabilityName = $("#vulnerabilityName").val();
+                var vulnerabilityDtime = $("#vulnerabilityDtime").val();
+                var CVEserialNumber = $("#CVEserialNumber").val();
+                var CNNVDserialNumber = $("#CNNVDserialNumber").val();
+                var vulnerabilityLevel = $("#vulnerabilityLevel").val();
+                var vulnerabilityrepairMethod = $("#vulnerabilityrepairMethod").val();
+                var vulnerabilityDetail=$("#vulnerabilityDetail").val();
+                var affectedVendor = $("#affectedVendor").val();
+                var uids='';
+                $("input[type='checkbox']").each(function () {
+                //$("input:checkbox").each(function () {
+                    if ($(this).prop("checked") == true) {
+                        uids += $(this).val() + ',';
+                    }
+                });
                 data = {
-
-                    tid: tid,
+                    vulnerabilityName: vulnerabilityName,
+                    vulnerabilityDtime: vulnerabilityDtime,
+                    CVEserialNumber: CVEserialNumber,
+                    CNNVDserialNumber:CNNVDserialNumber,
+                    vulnerabilityLevel: vulnerabilityLevel,
+                    vulnerabilityrepairMethod: vulnerabilityrepairMethod,
+                    affectedVendor: affectedVendor,
+                    vulnerabilityDetail:vulnerabilityDetail,
+                    uids: uids,
                 };
-                $.get("/workbench/finishmatters", data, function (result) {
-                    var jsonarray = $.parseJSON(result);
-                    var progressBarStatus = jsonarray['statusProgressValue'][0];
-                    var progressBarWidth = jsonarray['statusProgressValue'][1];
-                    var progressAriaValuenow = jsonarray['statusProgressValue'][2];
-                    $("div.progress-bar").css({"width": progressBarWidth, "aria-valuenow": progressAriaValuenow});
-                    $("#progress-value").text(progressBarStatus);
-
+                $.post("/workbench/releasematters", data, function (result) {
                 })
             });
         })
