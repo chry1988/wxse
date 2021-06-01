@@ -50,7 +50,20 @@ def releaseMatters(request):
 
 def checkMatters(request):
     if request.method == 'GET':
-        return render(request, 'workBench/checkMatters.html')
+        checkMattersList = userScheduleControler.objects.all()
+        checkMattersListPage = Paginator(checkMattersList, 2)
+        if request.method == "GET":
+            page = request.GET.get('page')
+            try:
+                checkMattersListObj = checkMattersListPage.page(page)
+            except PageNotAnInteger:
+                checkMattersListObj = checkMattersListPage.page(1)
+            except InvalidPage:
+                return HttpResponse('找不到页面的内容')
+            except EmptyPage:
+                checkMattersListObj = checkMattersListPage.page(checkMattersListPage.num_pages)
+        return render(request, 'workBench/checkMatters.html',{'checkMattersListPage':checkMattersListObj})
+
     elif request.method == 'POST':
         return None
 
@@ -190,7 +203,18 @@ def finishMatters(request):
 def closingMatters(request):
     targetUser = request.user.id
     closingTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=7)
-    return render(request, 'workBench/closingMatters.html', {'closingTasks': closingTasks})
+    closingTasksPage = Paginator(closingTasks, 2)
+    if request.method == "GET":
+        page = request.GET.get('page')
+        try:
+            closingTasksObj = closingTasksPage.page(page)
+        except PageNotAnInteger:
+            closingTasksObj = closingTasksPage.page(1)
+        except InvalidPage:
+            return HttpResponse('找不到页面的内容')
+        except EmptyPage:
+            closingTasksObj = closingTasksPage.page(closingTasksPage.num_pages)
+    return render(request, 'workBench/closingMatters.html', {'closingTasksPage': closingTasksObj})
 
 
 def vulnerabilityDetailView(request):
@@ -206,13 +230,22 @@ def warningNotice(request):
     if request.method == 'GET':
         noticeNumQuery = request.GET.get('noticeNumQuery')
         noticeNameQuery = request.GET.get('noticeNameQuery')
-
         if noticeNumQuery or noticeNameQuery:
             warningNoticeResult = NoticeDetial.objects.filter(noticeName=noticeNameQuery)
-            return render(request, 'workBench/warningNotice.html', {'warningNoticeResult': warningNoticeResult, })
         else:
             warningNoticeResult = NoticeDetial.objects.all()
-            return render(request, 'workBench/warningNotice.html', {'warningNoticeResult': warningNoticeResult, })
+        warningNoticeResultPage = Paginator(warningNoticeResult, 2)
+        if request.method == "GET":
+            page = request.GET.get('page')
+            try:
+                warningNoticeResultObj = warningNoticeResultPage.page(page)
+            except PageNotAnInteger:
+                warningNoticeResultObj = warningNoticeResultPage.page(1)
+            except InvalidPage:
+                return HttpResponse('找不到页面的内容')
+            except EmptyPage:
+                warningNoticeResultObj = warningNoticeResultPage.page(warningNoticeResultPage.num_pages)
+        return render(request, 'workBench/warningNotice.html', {'warningNoticeResultPage': warningNoticeResultObj, })
 
 
     elif request.method == 'POST':
