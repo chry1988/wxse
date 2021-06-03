@@ -12,6 +12,7 @@ class userScheduleControler(models.Model):
     taskUser = models.ForeignKey(wxseUser, on_delete=models.CASCADE)
     deadLine = models.DateTimeField(default=None, blank=True)
     taskAffectIP = models.ManyToManyField(IpV4, default=None, blank=True)
+    affectedServie= models.CharField(max_length=255, verbose_name='影响业务')
 
 
 class adminScheduleControler(models.Model):

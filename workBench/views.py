@@ -53,10 +53,11 @@ def releaseMatters(request):
         vulnerabilityLevel = request.POST.get('vulnerabilityLevel')
         CNNVDserialNumber = request.POST.get('CNNVDserialNumber')
         vulnerabilityrepairMethod = request.POST.get('vulnerabilityrepairMethod')
-        affectedVendor = request.POST.get('affectedVendor')
+        affectedServie = request.POST.get('affectedServie')
         uids = request.POST.get('uids')
 
-        vulnerabilityObj = vulnerability.objects.get_or_create(
+        # django.db.utils.IntegrityError: UNIQUEconstraintfailed: configureDataBase_vulnerability.cve_num
+        vulnerabilityObj = vulnerability.objects.create(
             name=vulnerabilityName,
             detail=vulnerabilityDetail,
             dtime=vulnerabilityDtime,
@@ -64,23 +65,19 @@ def releaseMatters(request):
             cve_num=CVEserialNumber,
             cnnvd_num=CNNVDserialNumber,
             level=vulnerabilityLevel,
-            affectedVendor=affectedVendor,
         )
-
-        class userScheduleControler(models.Model):
-            status = models.IntegerField(choices=userScheduleControlerChoices, )
-            taskVulnerability = models.ForeignKey(vulnerability, on_delete=models.DO_NOTHING)
-            taskUser = models.ForeignKey(wxseUser, on_delete=models.CASCADE)
-            deadLine = models.DateTimeField(default=None, blank=True)
-            taskAffectIP = models.ManyToManyField(IpV4, default=None, blank=True)
-
-        userList = re.split(uids, ',')
+        # vulnerabilityObj=vulnerability.objects.get(id=vulnerabilityObj.id)
+        userList = re.split(',', uids)
+        userList = [i for i in userList if i != '']
         for uItem in userList:
+            targetUser = wxseUser.objects.get(id=uItem)
+            print(targetUser.email,)
             targetUserScheduleControler = userScheduleControler.objects.create(
-                taskUser=uItem,
+                taskUser=targetUser,
                 deadLine=vulnerabilityDtime,
                 taskVulnerability=vulnerabilityObj,
                 status=1,
+                affectedServie=affectedServie,
             )
 
         return HttpResponse('ok')
