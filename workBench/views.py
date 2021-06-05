@@ -44,7 +44,30 @@ def releaseMatters(request):
         return HttpResponse('ban')
     if request.method == 'GET':
         userList = wxseUser.objects.all().values('id', 'first_name', 'last_name')
-        return render(request, 'workBench/releaseMatters.html', {'userList': userList})
+
+        waitToReleaseMatters = userScheduleControler.objects.filter(status=1).values(
+
+            'taskVulnerability__name',
+            'taskUser__first_name',
+            'taskUser__last_name',
+            'deadLine',
+            # taskAffectIP = models.ManyToManyField(IpV4, default=None, blank=True)
+            'affectedServie',
+        )
+        waitToReleaseMattersPage = Paginator(waitToReleaseMatters, 20)
+        if request.method == "GET":
+            # 获取 url 后面的 page 参数的值, 首页不显示 page 参数, 默认值是 1
+            page = request.GET.get('page')
+            try:
+                waitToReleaseMattersPageObj = waitToReleaseMattersPage.page(page)
+            except PageNotAnInteger:
+                waitToReleaseMattersPageObj = waitToReleaseMattersPage.page(1)
+            except InvalidPage:
+                return HttpResponse('找不到页面的内容')
+            except EmptyPage:
+                waitToReleaseMattersPageObj = waitToReleaseMattersPage.page(waitToReleaseMattersPage.num_pages)
+        return render(request, 'workBench/releaseMatters.html',
+                      {'waitToReleaseMattersPage': waitToReleaseMattersPageObj, 'userList': userList})
     elif request.method == 'POST':
         vulnerabilityName = request.POST.get('vulnerabilityName')
         vulnerabilityDtime = request.POST.get('vulnerabilityDtime')
@@ -71,7 +94,7 @@ def releaseMatters(request):
         userList = [i for i in userList if i != '']
         for uItem in userList:
             targetUser = wxseUser.objects.get(id=uItem)
-            print(targetUser.email,)
+            print(targetUser.email, )
             targetUserScheduleControler = userScheduleControler.objects.create(
                 taskUser=targetUser,
                 deadLine=vulnerabilityDtime,
