@@ -105,7 +105,7 @@
         {% for item in closingTasksPage %}
             <tr>
                 <td>{{ item.taskVulnerability.name }}</td>
-                <td>{{ item.taskVulnerability.level }}</td>
+                <td><span data-level="{{ item.taskVulnerability.level }}"></span></td>
                 <td>{{ item.taskVulnerability.repair_method }}</td>
                 <td>
                     <!-- Button trigger modal -->
@@ -125,7 +125,7 @@
         {% endfor %}
         </tbody>
     </table>
-     <nav aria-label="...">
+    <nav aria-label="...">
         <ul class="pagination">
             <li class="page-item">
                 <a class="page-link" href="?page=1" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
@@ -136,7 +136,7 @@
                 {% endif %}
             </li>
             <li class="page-item"><a class="page-link"
-                                     href="?page={{ closingTasksPage.number  }}">{{ closingTasksPage.number  }}</a></li>
+                                     href="?page={{ closingTasksPage.number }}">{{ closingTasksPage.number }}</a></li>
             {% if closingTasksPage.has_next %}
                 <li class="page-item">
                     <a class="page-link" href="?page={{ closingTasksPage.next_page_number }}">next</a>
@@ -153,6 +153,22 @@
         $(document).ready(function () {
             var myModal = document.getElementById('myModal')
             var myInput = document.getElementById('myInput')
+            $("span").each(function () {
+                    if ($(this).data('level') == 0) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-danger");
+                        $(this).text('高危漏洞')
+                    } else if ($(this).data('level') == 1) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-warning");
+                        $(this).text('中危漏洞')
+                    } else if ($(this).data('level') == 2) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-primary");
+                        $(this).text('低危漏洞')
+                    }
+                }
+            );
             myModal.addEventListener('shown.bs.modal', function () {
                 myInput.focus()
             })

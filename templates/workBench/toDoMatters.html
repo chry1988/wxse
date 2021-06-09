@@ -151,7 +151,7 @@
                 <td>{{ item.taskVulnerability__id }}</td>
                 <td>{{ item.taskVulnerability__name }}</td>
                 <td>{{ item.taskVulnerability__professionalwork__workName }}</td>
-                <td>{{ item.taskVulnerability__level }}</td>
+                <td><span data-level="{{ item.taskVulnerability__level }}"></span></td>
                 <td>{{ item.taskAffectIP__ip }}</td>
                 <td>
                     <!-- Button trigger modal -->
@@ -190,6 +190,22 @@
 {% block customerjs %}
     <script type="text/javascript">
         $(document).ready(function () {
+            $("span").each(function () {
+                    if ($(this).data('level') == 0) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-danger");
+                        $(this).text('高危漏洞')
+                    } else if ($(this).data('level') == 1) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-warning");
+                        $(this).text('中危漏洞')
+                    } else if ($(this).data('level') == 2) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-primary");
+                        $(this).text('低危漏洞')
+                    }
+                }
+            );
 
             $.ajaxSetup({
                 headers:

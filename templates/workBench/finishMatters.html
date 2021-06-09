@@ -19,12 +19,12 @@
                              aria-valuemax="100"></div>
                     </div>
                     <div>
-                        <p id = "progress-value"></p>
+                        <p id="progress-value"></p>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-{#                    <button type="button" class="btn btn-primary">Understood</button>#}
+                    {#                    <button type="button" class="btn btn-primary">Understood</button>#}
                 </div>
             </div>
         </div>
@@ -101,7 +101,7 @@
                 <td>{{ item.taskVulnerability__id }}</td>
                 <td>{{ item.taskVulnerability__name }}</td>
                 <td>{{ item.taskVulnerability__professionalwork__workName }}</td>
-                <td>{{ item.taskVulnerability__level }}</td>
+                <td><span data-level="{{ item.taskVulnerability__level }}"></span></td>
                 <td>{{ item.taskAffectIP__ip }}</td>
                 <td>
                     <!-- Button trigger modal -->
@@ -118,6 +118,22 @@
 {% block customerjs %}
     <script type="text/javascript">
         $(document).ready(function () {
+            $("span").each(function () {
+                    if ($(this).data('level') == 0) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-danger");
+                        $(this).text('高危漏洞')
+                    } else if ($(this).data('level') == 1) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-warning");
+                        $(this).text('中危漏洞')
+                    } else if ($(this).data('level') == 2) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-primary");
+                        $(this).text('低危漏洞')
+                    }
+                }
+            );
             $("td button").click(function () {
                 var tid = $(this).data("tid");
                 $("button[data-modify='actions']").attr('data-tid', tid);

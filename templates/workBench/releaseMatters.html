@@ -147,9 +147,11 @@
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
                 <td>{{ item.vulnerability__id }}</td>
-                <td>{{ item.vulnerability__name }}</td>
-                 <td>{{ item.affectedServie }}</td>
-                 <td>{{ item.vulnerability__level }}</td>
+                <td>{{ item.taskVulnerability__name }}</td>
+                <td>{{ item.affectedServie }}</td>
+                <td>
+                    <span data-level="{{ item.taskVulnerability__level }}"></span>
+                </td>
                 <td>{{ item.taskUser__last_name }}{{ item.taskUser__first_name }}</td>
                 <td>{{ item.deadLine }}</td>
 
@@ -206,6 +208,22 @@
                 initialDate: new Date(),
                 todayBtn: true,
             });
+            $("span").each(function () {
+                    if ($(this).data('level') == 0) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-danger");
+                        $(this).text('高危漏洞')
+                    } else if ($(this).data('level') == 1) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-warning");
+                        $(this).text('中危漏洞')
+                    } else if ($(this).data('level') == 2) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-primary");
+                        $(this).text('低危漏洞')
+                    }
+                }
+            );
             var myModal = document.getElementById('myModalrelease')
             var myInput = document.getElementById('myInput')
             $("#releaseMattersAdd").click(function () {

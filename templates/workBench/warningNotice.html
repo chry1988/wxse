@@ -86,10 +86,10 @@
     <form class="row g-3" action="/workbench/warningnotice" method="get">
         <div class="col-auto">
 
-            <input type="text" class="form-control" id="validationDefault01" name="noticeNumQuery" placeholder="漏洞编号" >
+            <input type="text" class="form-control" id="validationDefault01" name="noticeNumQuery" placeholder="漏洞编号">
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" name="noticeNameQuery" placeholder="通告名称" >
+            <input type="text" class="form-control" id="validationDefault02" name="noticeNameQuery" placeholder="通告名称">
         </div>
         <div class="col-auto">
             <button class="btn btn-primary" type="submit" id="queryDetail">查询</button>
@@ -114,7 +114,7 @@
                 <th scope="col">{{ item.id }}</th>
                 <th scope="col">{{ item.noticeDate }}</th>
                 <th scope="col">{{ item.noticeName }}</th>
-                <th scope="col">{{ item.noticeLevel }}</th>
+                <th scope="col"><span data-level="{{ item.noticeLevel }}"></span></th>
                 <th scope="col">{{ item.CVEserialNumber }}</th>
                 <th scope="col">{{ item.CNNVDserialNumber }}</th>
                 <th scope="col">{{ item.affectedVendor }}</th>
@@ -129,7 +129,7 @@
         {% endfor %}
         </tbody>
     </table>
-     <nav aria-label="...">
+    <nav aria-label="...">
         <ul class="pagination">
             <li class="page-item">
                 <a class="page-link" href="?page=1" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
@@ -140,14 +140,16 @@
                 {% endif %}
             </li>
             <li class="page-item"><a class="page-link"
-                                     href="?page={{ warningNoticeResultPage.number  }}">{{ warningNoticeResultPage.number  }}</a></li>
+                                     href="?page={{ warningNoticeResultPage.number }}">{{ warningNoticeResultPage.number }}</a>
+            </li>
             {% if warningNoticeResultPage.has_next %}
                 <li class="page-item">
                     <a class="page-link" href="?page={{ warningNoticeResultPage.next_page_number }}">next</a>
                 </li>
             {% endif %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ warningNoticeResultPage.paginator.num_pages }}"><span aria-hidden="true">&raquo;</span></a>
+                <a class="page-link" href="?page={{ warningNoticeResultPage.paginator.num_pages }}"><span
+                        aria-hidden="true">&raquo;</span></a>
             </li>
         </ul>
     </nav>
@@ -157,6 +159,22 @@
         $(document).ready(function () {
             var myModal = document.getElementById('myModal')
             var myInput = document.getElementById('myInput')
+            $("span").each(function () {
+                    if ($(this).data('level') == 0) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-danger");
+                        $(this).text('高危漏洞')
+                    } else if ($(this).data('level') == 1) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-warning");
+                        $(this).text('中危漏洞')
+                    } else if ($(this).data('level') == 2) {
+                        $(this).removeClass();
+                        $(this).addClass("badge bg-primary");
+                        $(this).text('低危漏洞')
+                    }
+                }
+            );
 
             $("td button").click(function () {
                 var wid = $(this).data("wid");
