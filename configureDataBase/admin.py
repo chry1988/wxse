@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models.workBench import userScheduleControler, adminScheduleControler
+from .models.workBench import userScheduleControler, adminScheduleControler, progressNote
 from .models.vulnerabilityControler import vulnerability, professionalWork
 from .models.warningNotice import NoticeDetial
 from .models.internetProtocolPool import IpV4
@@ -45,3 +45,10 @@ class IpV4Admin(admin.ModelAdmin):
 
 
 admin.site.register(IpV4, IpV4Admin)
+
+
+class progressNoteAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(progressNote, progressNoteAdmin)

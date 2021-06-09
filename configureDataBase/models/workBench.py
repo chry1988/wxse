@@ -12,7 +12,7 @@ class userScheduleControler(models.Model):
     taskUser = models.ForeignKey(wxseUser, on_delete=models.CASCADE)
     deadLine = models.DateTimeField(default=None, blank=True)
     taskAffectIP = models.ManyToManyField(IpV4, default=None, blank=True)
-    affectedServie= models.CharField(max_length=255, verbose_name='影响业务')
+    affectedServie = models.CharField(max_length=255, verbose_name='影响业务')
 
 
 class adminScheduleControler(models.Model):
@@ -20,3 +20,10 @@ class adminScheduleControler(models.Model):
     taskVulnerability = models.ForeignKey(vulnerability, on_delete=models.DO_NOTHING)
     taskUser = models.ForeignKey(wxseUser, on_delete=models.CASCADE)
     deadLine = models.DateTimeField(default=datetime.now, blank=True)
+
+
+class progressNote(models.Model):
+    messageDetail = models.TextField()
+    messageDate = models.DateTimeField(auto_now=True)
+    messageAuthor = models.CharField(max_length=255)
+    userScheduleControlerNote = models.ForeignKey(userScheduleControler, on_delete=models.CASCADE)

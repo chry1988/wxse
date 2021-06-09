@@ -5,7 +5,7 @@
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">查看详情</h5>
@@ -60,9 +60,24 @@
                         </tr>
                         </tbody>
                     </table>
+                    <table class="table table-bordered">
+                        <tbody id="autotables">
+                        <tr>
+                            <td>备注人员</td>
+                            <td></td>
+                            <td>备注时间</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>备注内容</td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
                     <div class="input-group">
-                        <span class="input-group-text">备注</span>
-                        <textarea class="form-control" aria-label="With textarea"></textarea>
+                        <span class="input-group-text">添加备注</span>
+                        <textarea class="form-control" aria-label="With textarea" id="notetext"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -170,7 +185,7 @@
                 {% endif %}
             </li>
             <li class="page-item"><a class="page-link"
-                                     href="?page={{ toDtasksPage.number  }}">{{ toDtasksPage.number  }}</a></li>
+                                     href="?page={{ toDtasksPage.number }}">{{ toDtasksPage.number }}</a></li>
             {% if toDtasksPage.has_next %}
                 <li class="page-item">
                     <a class="page-link" href="?page={{ toDtasksPage.next_page_number }}">next</a>
@@ -193,10 +208,12 @@
             $("button[id=waitingtofix]").click(function () {
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                 var tid = $(this).data("tid");
+                var notetext = $('#notetext').val()
                 data = {
                     csrftoken: csrftoken,
                     action: 0,
                     tid: tid,
+                    notetext: notetext,
                 };
                 $.post("/workbench/todomatters", data, function (result) {
                 })
@@ -204,11 +221,13 @@
             $("button[id=fixed]").click(function () {
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                 {#var csrftoken = Cookies.get('csrftoken');#}
+                var notetext = $('#notetext').val()
                 var tid = $(this).data("tid");
                 data = {
                     csrftoken: csrftoken,
                     action: 1,
                     tid: tid,
+                    notetext: notetext,
                 };
                 $.post("/workbench/todomatters", data, function (result) {
                 })
@@ -230,10 +249,25 @@
                     $("#vunerabilitycve_num").text(jsonarray['queryResult'][0]['cve_num']);
                     $("#vunerabilitycnnvd_num").text(jsonarray['queryResult'][0]['cnnvd_num']);
                     $("#vunerabilitydtime").text(jsonarray['queryResult'][0]['dtime']);
-
-                })
+                    var progressNoteObj = jsonarray['progressNoteObj']
+                    var autotableHtml = "";
+                    for (var i = 0; i < progressNoteObj.length; i++) {
+                        autotableHtml += "<tr>";
+                        autotableHtml += "<td class='table-active'>备注人员</td>";
+                        autotableHtml += "<td>" + progressNoteObj[i]['messageAuthor'] + "</td>"
+                        autotableHtml += "<td class='table-active'>备注时间</td>";
+                        autotableHtml += "<td>" + progressNoteObj[i]['messageDate'] + "</td>"
+                        autotableHtml += "</tr>";
+                        autotableHtml += "<tr>";
+                        autotableHtml += "<td class='table-active'>备注</td>";
+                        autotableHtml += "</tr>";
+                        autotableHtml += "<tr>";
+                        autotableHtml += "<td>" + progressNoteObj[i]['messageDetail'] + "</td>";
+                        autotableHtml += "</tr>";
+                    }
+                    $("#autotables").html(autotableHtml)
+                });
             });
         })
-
     </script>
 {% endblock %}

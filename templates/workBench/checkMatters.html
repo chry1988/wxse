@@ -21,13 +21,61 @@
                     <div>
                         <p id="progress-value"></p>
                     </div>
+                    <table class="table table-bordered">
+                        <thead>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="table-active">漏洞名称</td>
+                            <td colspan="2">
+                                <text id="vunerabilityname"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">详细信息</td>
+                            <td colspan="2">
+                                <text id="vunerabilitydetail"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">漏洞级别</td>
+                            <td colspan="2">
+                                <text id="vunerabilitylevel"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">修复方法</td>
+                            <td colspan="2">
+                                <text id="vunerabilityrepair_method"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">CVE</td>
+                            <td colspan="2">
+                                <text id="vunerabilitycve_num"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">CNNVD</td>
+                            <td colspan="2">
+                                <text id="vunerabilitycnnvd_num"></text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-active">时间</td>
+                            <td colspan="2">
+                                <text id="vunerabilitydtime"></text>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="modal-footer">
                     <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-primary" data-tid="{{ item.id }}" data-modify="change">
+                        <button type="button" class="btn btn-primary" data-dtid="{{ item.id }}" data-modify="pass">
                             验证通过
                         </button>
-                        <button type="button" class="btn btn-danger" data-tid="{{ item.id }}" data-modify="release">退回
+                        <button type="button" class="btn btn-danger" data-dtid="{{ item.id }}" data-modify="sendback">退回
                         </button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
                     </div>
@@ -112,7 +160,7 @@
                 <td>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop" data-tid="{{ item.id }}">
+                            data-bs-target="#staticBackdrop" data-modify="getdetail" data-tid="{{ item.id }}">
                         查看详情
                     </button>
                 </td>
@@ -150,55 +198,67 @@
         $(document).ready(function () {
             $("td button").click(function () {
                 var tid = $(this).data("tid");
-                $("button[data-modify='actions']").attr('data-tid', tid);
-                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-                data = {
-                    tid: tid,
-                };
-                $.get("/workbench/checkmatters/getdetail", data, function (result) {
+                var targetURL = "/workbench/checkmatters/getdetail?modify=getdetail&tid=" + tid
+                $.get(targetURL, function (result) {
                     var jsonarray = $.parseJSON(result);
                     var progressBarStatus = jsonarray['statusProgressValue'][0];
                     var progressBarWidth = jsonarray['statusProgressValue'][1];
                     var progressAriaValuenow = jsonarray['statusProgressValue'][2];
+                    var dtid = jsonarray['checkTask']['id'];
+                    var vunerabilitydetail = jsonarray['checkTask']['taskVulnerability__name']
+                    var vunerabilitydetail = jsonarray['checkTask']['taskUser__first_name']
+                    var vunerabilitydetail = jsonarray['checkTask']['deadLine']
+                    var vunerabilitydetail = jsonarray['checkTask']['affectedServie']
+
                     $("div.progress-bar").css({"width": progressBarWidth, "aria-valuenow": progressAriaValuenow});
                     $("#progress-value").text(progressBarStatus);
+                    $("button[data-modify='sendback']").attr('data-dtid', dtid);
+                    $("button[data-modify='pass']").attr('data-dtid', dtid);
+                    $("#vunerabilityname").text()
+                    $("#vunerabilitydetail").text()
+                    $("#vunerabilitylevel").text()
+                    $("#vunerabilityrepair_method").text()
+                    $("#vunerabilitycve_num").text()
+                    $("#vunerabilitycnnvd_num").text()
+                    $("#vunerabilitydtime").text()
+
                 })
             });
 
             //
             $("div button").click(function () {
-                var tid = $(this).data("tid");
+                var dtid = $(this).data("dtid");
                 var modify = $(this).data("modify");
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
 
                 if (modify == 'pass') {
                     data = {
                         csrfmiddlewaretoken: csrftoken,
-                        tid: tid,
-                        modify: 'delete',
+                        dtid: dtid,
+                        modify: 'pass',
                     };
                     $.post("/workbench/checkmatters/pass", data, function (result) {
                             var jsonarray = $.parseJSON(result);
-                            var targetwid = "button[data-tid=" + jsonarray["tid"] + "]";
-                            $(targetwid).parent().parent().parent().remove();
+                            var targetdtid = "td button[data-tid=" + jsonarray["tid"] + "]";
+                            $(targetdtid).parent().parent().parent().remove();
                         }
                     );
                 } else if (modify == 'sendback') {
                     data = {
                         csrfmiddlewaretoken: csrftoken,
-                        tid: tid,
-                        modify: 'release',
+                        dtid: dtid,
+                        modify: 'sendback',
                     };
                     $.post("/workbench/checkmatters/sendback", data, function (result) {
                             var jsonarray = $.parseJSON(result);
-                            var targetwid = "button[data-tid=" + jsonarray["tid"] + "]";
-                            $(targetwid).parent().parent().parent().remove();
+                            var targetdtid = "td button[data-tid=" + jsonarray["tid"] + "]";
+                            $(targetdtid).parent().parent().parent().remove();
                         }
                     );
                 } else if (modify == 'change') {
                     data = {
                         csrfmiddlewaretoken: csrftoken,
-                        tid: tid,
+                        dtid: dtid,
                         modify: 'get',
                     };
                     $.get("/workbench/releasematters/getdetil", data, function (result) {

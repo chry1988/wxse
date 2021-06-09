@@ -123,11 +123,32 @@ def releaseMatters(request):
 
 def checkMatters(request):
     if request.method == 'GET':
-        modify = request.POST.get('modify')
+        modify = request.GET.get('modify')
         if modify == 'getdetail':
-            tid = request.POST.get('tid')
-
-            return HttpResponse()
+            tid = request.GET.get('tid')
+            checkTasks = userScheduleControler.objects.filter(id=tid).values(
+                'id',
+                'status',
+                'taskVulnerability__name',
+                'taskUser__first_name',
+                'deadLine',
+                # 'taskAffectIP',
+                'affectedServie',
+            )
+            statusProgress = {
+                0: ['录入', '10%', '10'],
+                1: ['已提交', '20%', '20'],
+                2: ['已下发', '30%', '30'],
+                3: ['已修复', '50%', '50'],
+                4: ['暂缓修复', '40%', '40'],
+                5: ['已校验', '80%', '80'],
+                6: ['已办结', '90%', '90'],
+                7: ['已完成', '100%', '100'],
+            }
+            statusProgressValue = statusProgress[checkTasks[0]['status']]
+            result = json.dumps({'statusProgressValue': statusProgressValue, 'checkTask': checkTasks[0], },
+                                cls=DjangoJSONEncoder)
+            return HttpResponse(result)
         else:
             checkMattersList = userScheduleControler.objects.all()
             checkMattersListPage = Paginator(checkMattersList, 20)
@@ -146,18 +167,18 @@ def checkMatters(request):
     elif request.method == 'POST':
         modify = request.POST.get('modify')
         if modify == 'pass':
-            tid = request.POST.get('tid')
-            checkMattersPass = userScheduleControler.objects.get(id=tid)
+            dtid = request.POST.get('dtid')
+            checkMattersPass = userScheduleControler.objects.get(id=dtid)
             checkMattersPass.status = 5
             checkMattersPass.save()
-            result = json.dumps({'tid': tid})
+            result = json.dumps({'dtid': dtid})
             return HttpResponse(result)
         elif modify == 'sendback':
-            tid = request.POST.get('tid')
-            checkMattersSendBack = userScheduleControler.objects.get(id=tid)
+            dtid = request.POST.get('dtid')
+            checkMattersSendBack = userScheduleControler.objects.get(id=dtid)
             checkMattersSendBack.status = 2
             checkMattersSendBack.save()
-            result = json.dumps({'tid': tid})
+            result = json.dumps({'dtid': dtid})
             return HttpResponse(result)
 
 
@@ -201,23 +222,29 @@ def toDoMatters(request):
     elif request.method == 'POST':
         doAction = request.POST.get('action')
         userScheduleControlerID = request.POST.get('tid')
+        notetext = request.POST.get('notetext')
+        print(notetext)
         targetUser = request.user.id
+        targetUserObj = wxseUser.objects.get(id=targetUser)
         doResult = userScheduleControler.objects.get(id=userScheduleControlerID)
-        print(doResult.id)
         doAction = int(doAction)
         if doAction == 0:
             doResult.status = 4
-            doResult.save()
         elif doAction == 1:
             doResult.status = 3
-            doResult.save()
+        doResult.save()
+        updateProgressNote = progressNote.objects.create(
+            messageDetail=notetext,
+            messageAuthor=targetUserObj.last_name + targetUserObj.last_name,
+            userScheduleControlerNote=doResult,
+        )
+        updateProgressNote.save()
         return HttpResponse('success')
 
 
 # @csrf_protect
 def toDoMattersDetail(request):
     if request.method == 'GET':
-
         searchId = request.GET.get('tid')
         targetUser = request.user.id
         queryResult = vulnerability.objects.filter(userschedulecontroler=searchId).values(
@@ -237,20 +264,26 @@ def toDoMattersDetail(request):
             'workName',
             'priorityLevel',
         )
+        progressNoteObj = progressNote.objects.filter(userScheduleControlerNote=searchId).values(
+            'messageDetail',
+            'messageDate',
+            'messageAuthor',
+        )
         result = json.dumps({'queryResult': list(queryResult), 'queryIPResult': list(queryIPResult),
-                             'queryProfessionsalWrokResult': list(queryProfessionsalWrokResult)}, cls=DjangoJSONEncoder)
+                             'queryProfessionsalWrokResult': list(queryProfessionsalWrokResult),
+                             'progressNoteObj': list(progressNoteObj)}, cls=DjangoJSONEncoder)
         return HttpResponse(result)
     elif request.method == 'POST':
         doAction = request.POST.get('action')
         userScheduleControlerID = request.POST.get('tid')
-        targetUser = request.user.id
+
         doResult = userScheduleControler.objects.get(id=userScheduleControlerID)
         if doAction == 0:
             doResult.status = 4
-            doResult.save()
         elif doAction == 1:
             doResult.status = 3
-            doResult.save()
+
+        doResult.save()
         return None
 
 
