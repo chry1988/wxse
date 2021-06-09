@@ -5,7 +5,7 @@
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">进度情况</h5>
@@ -69,9 +69,18 @@
                         </tr>
                         </tbody>
                     </table>
+                    <hr>
+                    <table class="table table-bordered">
+                        <tbody id="autotables">
+                        </tbody>
+                    </table>
+                    <div class="input-group">
+                        <span class="input-group-text">添加备注</span>
+                        <textarea class="form-control" aria-label="With textarea" id="notetext"></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <div class="btn-group" role="group" aria-label="Basic example">
+                    <div class="btn-group" role="group">
                         <button type="button" class="btn btn-primary" data-dtid="{{ item.id }}" data-modify="pass">
                             验证通过
                         </button>
@@ -221,6 +230,23 @@
                     $("#vunerabilitycve_num").text()
                     $("#vunerabilitycnnvd_num").text()
                     $("#vunerabilitydtime").text()
+                    var progressNoteObj = jsonarray['progressNoteObj']
+                    var autotableHtml = "";
+                    for (var i = 0; i < progressNoteObj.length; i++) {
+                        autotableHtml += "<tr>";
+                        autotableHtml += "<td class='table-active'>备注人员</td>";
+                        autotableHtml += "<td>" + progressNoteObj[i]['messageAuthor'] + "</td>"
+                        autotableHtml += "<td class='table-active'>备注时间</td>";
+                        autotableHtml += "<td>" + progressNoteObj[i]['messageDate'] + "</td>"
+                        autotableHtml += "</tr>";
+                        autotableHtml += "<tr>";
+                        autotableHtml += "<td class='table-active'>备注</td>";
+                        autotableHtml += "</tr>";
+                        autotableHtml += "<tr>";
+                        autotableHtml += "<td>" + progressNoteObj[i]['messageDetail'] + "</td>";
+                        autotableHtml += "</tr>";
+                    }
+                    $("#autotables").html(autotableHtml)
 
                 })
             });

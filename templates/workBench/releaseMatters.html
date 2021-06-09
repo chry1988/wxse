@@ -146,10 +146,13 @@
         {% for item in waitToReleaseMattersPage %}
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ item.vulnerability__id }}</td>
                 <td>{{ item.vulnerability__name }}</td>
+                 <td>{{ item.affectedServie }}</td>
+                 <td>{{ item.vulnerability__level }}</td>
                 <td>{{ item.taskUser__last_name }}{{ item.taskUser__first_name }}</td>
                 <td>{{ item.deadLine }}</td>
-                <td>{{ item.affectedServie }}</td>
+
                 <td>
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button type="button" class="btn btn-warning" data-bs-toggle="modal"

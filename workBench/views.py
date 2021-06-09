@@ -53,6 +53,7 @@ def releaseMatters(request):
             'deadLine',
             # taskAffectIP = models.ManyToManyField(IpV4, default=None, blank=True)
             'affectedServie',
+            'taskVulnerability__level'
         )
         waitToReleaseMattersPage = Paginator(waitToReleaseMatters, 20)
         if request.method == "GET":
@@ -145,8 +146,14 @@ def checkMatters(request):
                 6: ['已办结', '90%', '90'],
                 7: ['已完成', '100%', '100'],
             }
+            progressNoteObj = progressNote.objects.filter(userScheduleControlerNote=tid).values(
+                'messageDetail',
+                'messageDate',
+                'messageAuthor',
+            )
             statusProgressValue = statusProgress[checkTasks[0]['status']]
-            result = json.dumps({'statusProgressValue': statusProgressValue, 'checkTask': checkTasks[0], },
+            result = json.dumps({'statusProgressValue': statusProgressValue, 'checkTask': checkTasks[0],
+                                 'progressNoteObj': list(progressNoteObj)},
                                 cls=DjangoJSONEncoder)
             return HttpResponse(result)
         else:
