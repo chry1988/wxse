@@ -3,9 +3,10 @@
 
 
     <!-- Modal -->
-    <div class="modal fade" id="myModalrelease" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade " id="myModalrelease" data-bs-backdrop="static" data-bs-keyboard="false"
+         tabindex="-1"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">进度情况</h5>
@@ -150,18 +151,17 @@
                 <td>{{ item.deadLine }}</td>
                 <td>{{ item.affectedServie }}</td>
                 <td>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop" data-tid="{{ item.id }}">
-                        查看详情
-                    </button>
-                </td>
-                <td>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop" data-tid="{{ item.id }}">
-                        查看详情
-                    </button>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                data-bs-target="#myModalrelease" data-tid="{{ item.id }}" data-modify="change">查看任务
+                        </button>
+                        <button type="button" class="btn btn-primary" data-tid="{{ item.id }}" data-modify="release">
+                            下发任务
+                        </button>
+                        <button type="button" class="btn btn-danger" data-tid="{{ item.id }}" data-modify="delete">
+                            删除任务
+                        </button>
+                    </div>
                 </td>
             </tr>
         {% endfor %}
@@ -237,6 +237,138 @@
                 $.post("/workbench/releasematters", data, function (result) {
                 })
             });
+
+            //
+            $("td button").click(function () {
+                var tid = $(this).data("tid");
+                var modify = $(this).data("modify");
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+                if (modify == 'delete') {
+                    data = {
+                        csrfmiddlewaretoken: csrftoken,
+                        tid: tid,
+                        modify: 'delete',
+                    };
+                    $.post("/workbench/releasematters/delete", data, function (result) {
+                            var jsonarray = $.parseJSON(result);
+                            var targetwid = "button[data-tid=" + jsonarray["tid"] + "]";
+                            $(targetwid).parent().parent().parent().remove();
+                        }
+                    );
+                } else if (modify == 'release') {
+                    data = {
+                        csrfmiddlewaretoken: csrftoken,
+                        tid: tid,
+                        modify: 'release',
+                    };
+                    $.post("/workbench/releasematters/release", data, function (result) {
+                            var jsonarray = $.parseJSON(result);
+                            var targetwid = "button[data-tid=" + jsonarray["tid"] + "]";
+                            $(targetwid).parent().parent().parent().remove();
+                        }
+                    );
+                } else if (modify == 'change') {
+                    data = {
+                        csrfmiddlewaretoken: csrftoken,
+                        tid: tid,
+                        modify: 'get',
+                    };
+                    $.get("/workbench/releasematters/getdetil", data, function (result) {
+
+                            var jsonarray = $.parseJSON(result);
+
+
+                            $("#mtitle").text(jsonarray['queryresult'][0]['programName']);
+                            $("#programName").val(jsonarray['queryresult'][0]['programName']);
+                            $("#startDate").val(jsonarray['queryresult'][0]['startDate']);
+                            $("#endDate").val(jsonarray['queryresult'][0]['endDate']);
+                            $("#inPutStream").val(jsonarray['queryresult'][0]['inPutStream']);
+                            $("#inPutStreamSub").val(jsonarray['queryresult'][0]['inPutStreamSub']);
+                            $("#adminStaff").val(jsonarray['queryresult'][0]['adminStaff']);
+                            $("#notes").val(jsonarray['queryresult'][0]['notes']);
+
+                            var programChannel = jsonarray['queryresult'][0]['programChannel'];
+                            $("#programChannel option").each(function () {
+                                if ($(this).text() == programChannel) {
+                                    $(this).prop("selected", 'selected');
+                                }
+                            });
+
+
+                            var isLive = jsonarray['queryresult'][0]['isLive'];
+                            if (isLive == true) {
+                                $("#isLive").prop('checked', 'true');
+                                $("#isLive").val('true');
+                            }
+                            var isRecode = jsonarray['queryresult'][0]['isRecode'];
+                            if (isRecode == true) {
+                                $("#isRecode").prop('checked', 'true');
+                                $("#isRecode").val('true');
+                            }
+                            var adminStafflist = jsonarray['staffquery'];
+                            var adminStaff = jsonarray['queryresult'][0]['adminStaff'];
+                            if ($("#adminStaff option").length == 0) {
+                                for (i in adminStafflist) {
+                                    if (adminStafflist[i]['id'] == adminStaff) {
+                                        $("#adminStaff").append("<option value=" + adminStafflist[i]['id'] + " selected>" + adminStafflist[i]['staffName'] + "</option>");
+                                    } else {
+                                        $("#adminStaff").append("<option value=" + adminStafflist[i]['id'] + ">" + adminStafflist[i]['staffName'] + "</option>");
+                                    }
+
+                                }
+                            }
+                            //$("#adminStaff option").each(function () {
+                            //   if ($(this).text() == adminStaff) {
+                            //     $(this).prop("selected", 'selected');
+                            //  }
+                            // });
+
+
+                            $("button[data-modify='postchange']").attr('data-wid', wid);
+                            $("button[data-modify='postchange']").attr('data-tid', tid);
+
+                        }
+                    );
+                } else if (modify == 'postchange') {
+                    var programName = $("#programName").val();
+                    var startDate = $("#startDate").val();
+                    var endDate = $("#endDate").val();
+                    var inPutStream = $("#inPutStream").val();
+                    var inPutStreamSub = $("#inPutStreamSub").val();
+                    var notes = $("#notes").val();
+                    var programChannel = $("#programChannel").val();
+                    var isLive = $("#isLive").is(':checked');
+                    var isRecode = $("#isRecode").is(':checked');
+                    var adminStaff = $("#adminStaff").val();
+
+                    postdata = {
+                        csrfmiddlewaretoken: csrftoken,
+                        tid: tid,
+                        wid: wid,
+                        programName: programName,
+                        startDate: startDate,
+                        endDate: endDate,
+                        inPutStream: inPutStream,
+                        inPutStreamSub: inPutStreamSub,
+                        notes: notes,
+                        programChannel: programChannel,
+                        isLive: isLive,
+                        isRecode: isRecode,
+                        adminStaff: adminStaff,
+                        modify: 'change',
+                    }
+                    ;
+                    $.post("/workbench/releasematters/change", postdata, function (result) {
+                        if (result == 'success') {
+                            window.location.reload()
+                        } else if (result == 'error') {
+                            alert(result)
+                        }
+                    })
+                }
+            });
+            //
         })
     </script>
 {% endblock %}

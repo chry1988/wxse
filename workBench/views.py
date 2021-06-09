@@ -46,7 +46,7 @@ def releaseMatters(request):
         userList = wxseUser.objects.all().values('id', 'first_name', 'last_name')
 
         waitToReleaseMatters = userScheduleControler.objects.filter(status=1).values(
-
+            'id',
             'taskVulnerability__name',
             'taskUser__first_name',
             'taskUser__last_name',
@@ -69,6 +69,21 @@ def releaseMatters(request):
         return render(request, 'workBench/releaseMatters.html',
                       {'waitToReleaseMattersPage': waitToReleaseMattersPageObj, 'userList': userList})
     elif request.method == 'POST':
+        modify = request.POST.get('modify')
+        if modify == 'delete':
+            tid = request.POST.get('tid')
+            releaseMattersDelete = userScheduleControler.objects.get(id=tid)
+            releaseMattersDelete.delete()
+            result = json.dumps({'tid': tid})
+            return HttpResponse(result)
+        elif modify == 'release':
+            tid = request.POST.get('tid')
+            releaseMattersRelease = userScheduleControler.objects.get(id=tid)
+            releaseMattersRelease.status = 2
+            releaseMattersRelease.save()
+            result = json.dumps({'tid': tid})
+            return HttpResponse(result)
+
         vulnerabilityName = request.POST.get('vulnerabilityName')
         vulnerabilityDtime = request.POST.get('vulnerabilityDtime')
         CVEserialNumber = request.POST.get('CVEserialNumber')
@@ -108,22 +123,42 @@ def releaseMatters(request):
 
 def checkMatters(request):
     if request.method == 'GET':
-        checkMattersList = userScheduleControler.objects.all()
-        checkMattersListPage = Paginator(checkMattersList, 2)
-        if request.method == "GET":
-            page = request.GET.get('page')
-            try:
-                checkMattersListObj = checkMattersListPage.page(page)
-            except PageNotAnInteger:
-                checkMattersListObj = checkMattersListPage.page(1)
-            except InvalidPage:
-                return HttpResponse('找不到页面的内容')
-            except EmptyPage:
-                checkMattersListObj = checkMattersListPage.page(checkMattersListPage.num_pages)
-        return render(request, 'workBench/checkMatters.html', {'checkMattersListPage': checkMattersListObj})
+        modify = request.POST.get('modify')
+        if modify == 'getdetail':
+            tid = request.POST.get('tid')
+
+            return HttpResponse()
+        else:
+            checkMattersList = userScheduleControler.objects.all()
+            checkMattersListPage = Paginator(checkMattersList, 20)
+            if request.method == "GET":
+                page = request.GET.get('page')
+                try:
+                    checkMattersListObj = checkMattersListPage.page(page)
+                except PageNotAnInteger:
+                    checkMattersListObj = checkMattersListPage.page(1)
+                except InvalidPage:
+                    return HttpResponse('找不到页面的内容')
+                except EmptyPage:
+                    checkMattersListObj = checkMattersListPage.page(checkMattersListPage.num_pages)
+            return render(request, 'workBench/checkMatters.html', {'checkMattersListPage': checkMattersListObj})
 
     elif request.method == 'POST':
-        return None
+        modify = request.POST.get('modify')
+        if modify == 'pass':
+            tid = request.POST.get('tid')
+            checkMattersPass = userScheduleControler.objects.get(id=tid)
+            checkMattersPass.status = 5
+            checkMattersPass.save()
+            result = json.dumps({'tid': tid})
+            return HttpResponse(result)
+        elif modify == 'sendback':
+            tid = request.POST.get('tid')
+            checkMattersSendBack = userScheduleControler.objects.get(id=tid)
+            checkMattersSendBack.status = 2
+            checkMattersSendBack.save()
+            result = json.dumps({'tid': tid})
+            return HttpResponse(result)
 
 
 # @csrf_protect
@@ -145,7 +180,7 @@ def toDoMatters(request):
             'taskVulnerability__professionalwork__workName',
             'taskAffectIP__ip'
         )
-        toDtasksPage = Paginator(toDoTasks, 2)
+        toDtasksPage = Paginator(toDoTasks, 20)
         if request.method == "GET":
             # 获取 url 后面的 page 参数的值, 首页不显示 page 参数, 默认值是 1
             page = request.GET.get('page')
@@ -261,7 +296,7 @@ def finishMatters(request):
 def closingMatters(request):
     targetUser = request.user.id
     closingTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=7)
-    closingTasksPage = Paginator(closingTasks, 2)
+    closingTasksPage = Paginator(closingTasks, 20)
     if request.method == "GET":
         page = request.GET.get('page')
         try:
@@ -292,7 +327,7 @@ def warningNotice(request):
             warningNoticeResult = NoticeDetial.objects.filter(noticeName=noticeNameQuery)
         else:
             warningNoticeResult = NoticeDetial.objects.all()
-        warningNoticeResultPage = Paginator(warningNoticeResult, 2)
+        warningNoticeResultPage = Paginator(warningNoticeResult, 20)
         if request.method == "GET":
             page = request.GET.get('page')
             try:

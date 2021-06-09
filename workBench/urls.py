@@ -14,5 +14,12 @@ urlpatterns = [
     path('warningnotice/add', views.warningNoticeAdd),
     path('warningnoticedetail', views.warningNoticeDetail),
     path('releasematters', views.releaseMatters),
+    path('releasematters/change', views.releaseMatters),
+    path('releasematters/getdetail', views.releaseMatters),
+    path('releasematters/release', views.releaseMatters),
+    path('releasematters/delete', views.releaseMatters),
     path('checkmatters', views.checkMatters),
+    path('checkmatters/getdetail', views.checkMatters),
+    path('checkmatters/pass', views.checkMatters),
+    path('checkmatters/sendback', views.checkMatters),
 ]

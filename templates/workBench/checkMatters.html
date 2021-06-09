@@ -23,8 +23,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                    {#                    <button type="button" class="btn btn-primary">Understood</button>#}
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-primary" data-tid="{{ item.id }}" data-modify="change">
+                            验证通过
+                        </button>
+                        <button type="button" class="btn btn-danger" data-tid="{{ item.id }}" data-modify="release">退回
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -149,7 +155,7 @@
                 data = {
                     tid: tid,
                 };
-                $.get("/workbench/finishmatters", data, function (result) {
+                $.get("/workbench/checkmatters/getdetail", data, function (result) {
                     var jsonarray = $.parseJSON(result);
                     var progressBarStatus = jsonarray['statusProgressValue'][0];
                     var progressBarWidth = jsonarray['statusProgressValue'][1];
@@ -158,6 +164,138 @@
                     $("#progress-value").text(progressBarStatus);
                 })
             });
+
+            //
+            $("div button").click(function () {
+                var tid = $(this).data("tid");
+                var modify = $(this).data("modify");
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+                if (modify == 'pass') {
+                    data = {
+                        csrfmiddlewaretoken: csrftoken,
+                        tid: tid,
+                        modify: 'delete',
+                    };
+                    $.post("/workbench/checkmatters/pass", data, function (result) {
+                            var jsonarray = $.parseJSON(result);
+                            var targetwid = "button[data-tid=" + jsonarray["tid"] + "]";
+                            $(targetwid).parent().parent().parent().remove();
+                        }
+                    );
+                } else if (modify == 'sendback') {
+                    data = {
+                        csrfmiddlewaretoken: csrftoken,
+                        tid: tid,
+                        modify: 'release',
+                    };
+                    $.post("/workbench/checkmatters/sendback", data, function (result) {
+                            var jsonarray = $.parseJSON(result);
+                            var targetwid = "button[data-tid=" + jsonarray["tid"] + "]";
+                            $(targetwid).parent().parent().parent().remove();
+                        }
+                    );
+                } else if (modify == 'change') {
+                    data = {
+                        csrfmiddlewaretoken: csrftoken,
+                        tid: tid,
+                        modify: 'get',
+                    };
+                    $.get("/workbench/releasematters/getdetil", data, function (result) {
+
+                            var jsonarray = $.parseJSON(result);
+
+
+                            $("#mtitle").text(jsonarray['queryresult'][0]['programName']);
+                            $("#programName").val(jsonarray['queryresult'][0]['programName']);
+                            $("#startDate").val(jsonarray['queryresult'][0]['startDate']);
+                            $("#endDate").val(jsonarray['queryresult'][0]['endDate']);
+                            $("#inPutStream").val(jsonarray['queryresult'][0]['inPutStream']);
+                            $("#inPutStreamSub").val(jsonarray['queryresult'][0]['inPutStreamSub']);
+                            $("#adminStaff").val(jsonarray['queryresult'][0]['adminStaff']);
+                            $("#notes").val(jsonarray['queryresult'][0]['notes']);
+
+                            var programChannel = jsonarray['queryresult'][0]['programChannel'];
+                            $("#programChannel option").each(function () {
+                                if ($(this).text() == programChannel) {
+                                    $(this).prop("selected", 'selected');
+                                }
+                            });
+
+
+                            var isLive = jsonarray['queryresult'][0]['isLive'];
+                            if (isLive == true) {
+                                $("#isLive").prop('checked', 'true');
+                                $("#isLive").val('true');
+                            }
+                            var isRecode = jsonarray['queryresult'][0]['isRecode'];
+                            if (isRecode == true) {
+                                $("#isRecode").prop('checked', 'true');
+                                $("#isRecode").val('true');
+                            }
+                            var adminStafflist = jsonarray['staffquery'];
+                            var adminStaff = jsonarray['queryresult'][0]['adminStaff'];
+                            if ($("#adminStaff option").length == 0) {
+                                for (i in adminStafflist) {
+                                    if (adminStafflist[i]['id'] == adminStaff) {
+                                        $("#adminStaff").append("<option value=" + adminStafflist[i]['id'] + " selected>" + adminStafflist[i]['staffName'] + "</option>");
+                                    } else {
+                                        $("#adminStaff").append("<option value=" + adminStafflist[i]['id'] + ">" + adminStafflist[i]['staffName'] + "</option>");
+                                    }
+
+                                }
+                            }
+                            //$("#adminStaff option").each(function () {
+                            //   if ($(this).text() == adminStaff) {
+                            //     $(this).prop("selected", 'selected');
+                            //  }
+                            // });
+
+
+                            $("button[data-modify='postchange']").attr('data-wid', wid);
+                            $("button[data-modify='postchange']").attr('data-tid', tid);
+
+                        }
+                    );
+                } else if (modify == 'postchange') {
+                    var programName = $("#programName").val();
+                    var startDate = $("#startDate").val();
+                    var endDate = $("#endDate").val();
+                    var inPutStream = $("#inPutStream").val();
+                    var inPutStreamSub = $("#inPutStreamSub").val();
+                    var notes = $("#notes").val();
+                    var programChannel = $("#programChannel").val();
+                    var isLive = $("#isLive").is(':checked');
+                    var isRecode = $("#isRecode").is(':checked');
+                    var adminStaff = $("#adminStaff").val();
+
+                    postdata = {
+                        csrfmiddlewaretoken: csrftoken,
+                        tid: tid,
+                        wid: wid,
+                        programName: programName,
+                        startDate: startDate,
+                        endDate: endDate,
+                        inPutStream: inPutStream,
+                        inPutStreamSub: inPutStreamSub,
+                        notes: notes,
+                        programChannel: programChannel,
+                        isLive: isLive,
+                        isRecode: isRecode,
+                        adminStaff: adminStaff,
+                        modify: 'change',
+                    }
+                    ;
+                    $.post("/workbench/releasematters/change", postdata, function (result) {
+                        if (result == 'success') {
+                            window.location.reload()
+                        } else if (result == 'error') {
+                            alert(result)
+                        }
+                    })
+                }
+            });
+            //
         })
     </script>
 {% endblock %}
