@@ -226,6 +226,10 @@
             );
             var myModal = document.getElementById('myModalrelease')
             var myInput = document.getElementById('myInput')
+            var editor = new Simditor({
+                textarea: $('#vulnerabilityrepairMethod')
+                //optional options
+            });
             $("#releaseMattersAdd").click(function () {
                 {#var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();#}
                 var vulnerabilityName = $("#vulnerabilityName").val();
