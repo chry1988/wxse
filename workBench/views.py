@@ -428,6 +428,7 @@ def warningNoticeAdd(request):
         CVEserialNumber = request.POST.get('CVEserialNumber')
         CNNVDserialNumber = request.POST.get('CNNVDserialNumber')
         affectedVendor = request.POST.get('affectedVendor')
+        noticeDetail = request.POST.get('noticeDetail')
         print(noticeNum,
               noticeDate,
               noticeLevel,
@@ -441,5 +442,6 @@ def warningNoticeAdd(request):
             CVEserialNumber=CVEserialNumber,
             CNNVDserialNumber=CNNVDserialNumber,
             affectedVendor=affectedVendor,
+            noticeDetail=noticeDetail,
         )
     return render(request, 'workBench/warningNoticeAdd.html', )

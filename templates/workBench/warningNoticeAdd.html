@@ -66,6 +66,16 @@
                 <input type="text" class="form-control" id="affectedVendor" placeholder="影响厂商" required>
             </div>
         </div>
+
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="noticeDetail" class="col-form-label">通告描述</label>
+            </div>
+            <div class="col-auto">
+                <textarea type="text" class="form-control" id="noticeDetail" placeholder="通告描述" required></textarea>
+            </div>
+        </div>
+
         <div class="col-auto">
             <button id="warningNoticeAdd" class="btn btn-primary" type="submit">新增</button>
         </div>
@@ -82,6 +92,10 @@
                 initialDate: new Date(),
                 todayBtn: true,
             });
+            var editor = new Simditor({
+                textarea: $('#noticeDetail')
+                //optional options
+            });
             $("button[id=warningNoticeAdd]").click(function () {
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                 var noticeNum = $("#noticeNum").val();
@@ -92,16 +106,17 @@
                 var CNNVDserialNumber = $("#CNNVDserialNumber").val();
                 var affectedVendor = $("#affectedVendor").val();
                 {#var affectedComponent = $("#programChannel").val();#}
-                {#var noticeDetail = $("#isLive").is(':checked');#}
+                var noticeDetail = $("#noticeDetail").val();
                 data = {
                     csrftoken: csrftoken,
                     noticeNum: noticeNum,
-                    noticeName:noticeName,
+                    noticeName: noticeName,
                     noticeDate: noticeDate,
                     noticeLevel: noticeLevel,
                     CVEserialNumber: CVEserialNumber,
                     CNNVDserialNumber: CNNVDserialNumber,
                     affectedVendor: affectedVendor,
+                    noticeDetail:noticeDetail,
                 };
                 $.post("/workbench/warningnotice/add", data, function (result) {
                 })
