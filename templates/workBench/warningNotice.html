@@ -45,22 +45,22 @@
                         </div>
                         <div class="col-auto">
                             <label for="noticeDate" class="form-label">通告时间</label>
-                            <input type="text" class="form-control" id="noticeDate" placeholder="漏洞编号"
+                            <input type="text" class="form-control" id="noticeDate" placeholder="通告时间"
                                    disabled readonly>
                         </div>
                         <div class="col-auto">
                             <label for="validationCustom01" class="form-label">通告人员</label>
-                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
+                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告人员"
                                    required>
                         </div>
                         <div class="col-auto">
-                            <label for="validationCustom01" class="form-label">通告描述</label>
-                            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号"
-                                   disabled readonly>
+                            <label for="noticeDetail" class="form-label">通告描述</label>
+                            <div id="noticeDetail" readonly>
+                            </div>
                         </div>
                         <div class="col-auto">
                             <label for="validationCustom01" class="form-label">附件</label>
-                            <input type="text" class="form-control" id="validationDefault02" placeholder="通告名称"
+                            <input type="text" class="form-control" id="validationDefault02" placeholder="附件"
                                    required>
                         </div>
                         <div class="col-auto">
@@ -192,11 +192,9 @@
                     $("#CVEserialNumber").val(jsonarray['queryresult'][0]['CVEserialNumber']);
                     $("#CNNVDserialNumber").val(jsonarray['queryresult'][0]['CNNVDserialNumber']);
                     $("#affectedVendor").val(jsonarray['queryresult'][0]['affectedVendor']);
+                    $("#noticeDetail").html(jsonarray['queryresult'][0]['noticeDetail']);
                 })
             });
-            myModal.addEventListener('shown.bs.modal', function () {
-                myInput.focus()
-            })
         })
     </script>
 {% endblock %}
