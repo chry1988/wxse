@@ -251,7 +251,7 @@
                     $("#vunerabilityname").text(jsonarray['queryResult'][0]['name']);
                     $("#vunerabilitydetail").text(jsonarray['queryResult'][0]['detail']);
                     $("#vunerabilitylevel").text(jsonarray['queryResult'][0]['level']);
-                    $("#vunerabilityrepair_method").text(jsonarray['queryResult'][0]['repair_method']);
+                    $("#vunerabilityrepair_method").html(jsonarray['queryResult'][0]['repair_method']);
                     $("#vunerabilitycve_num").text(jsonarray['queryResult'][0]['cve_num']);
                     $("#vunerabilitycnnvd_num").text(jsonarray['queryResult'][0]['cnnvd_num']);
                     $("#vunerabilitydtime").text(jsonarray['queryResult'][0]['dtime']);

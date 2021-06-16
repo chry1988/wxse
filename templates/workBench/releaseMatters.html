@@ -9,7 +9,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">进度情况</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">新增任务</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -61,8 +61,8 @@
                                 <label for="vulnerabilityDetail" class="col-form-label">描述</label>
                             </div>
                             <div class="col-auto">
-                                <input type="text" class="form-control" id="vulnerabilityDetail" placeholder="描述"
-                                       required>
+                                <textarea type="text" class="form-control" id="vulnerabilityDetail" placeholder="描述"
+                                          required></textarea>
                             </div>
                         </div>
                         <div class="row g-3 align-items-center">
@@ -113,6 +113,109 @@
             </div>
         </div>
     </div>
+    <div class="modal fade " id="myModalcheck" data-bs-backdrop="static" data-bs-keyboard="false"
+         tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">查看任务</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3">
+                        {% csrf_token %}
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="vulnerabilityNameCheck" class="col-form-label">漏洞名称</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="text" id="vulnerabilityNameCheck" class="form-control">
+                            </div>
+                            <div class="col-auto">
+                                <label for="vulnerabilityDtimeCheck" class="col-form-label">截止时间</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="text" class="form-control" id="vulnerabilityDtimeCheck" placeholder="">
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="CVEserialNumberCheck" class="col-form-label">CVE编号</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="text" class="form-control" id="CVEserialNumberCheck" placeholder="CVE编号"
+                                       required>
+                            </div>
+                            <div class="col-auto">
+                                <label for="CNNVDserialNumberCheck" class="col-form-label">CNNVD编号</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="text" class="form-control" id="CNNVDserialNumberCheck"
+                                       placeholder="CNNVD编号"
+                                       required>
+                            </div>
+                            <div class="col-auto">
+                                <label for="vulnerabilityLevelCheck" class="col-form-label">严重级别</label>
+                            </div>
+                            <div class="col-auto">
+                                <select class="form-select" aria-label="Default select example"
+                                        id="vulnerabilityLevelCheck">
+                                    <option selected disabled value="">请选择漏洞级别</option>
+                                    <option value="0">高危漏洞</option>
+                                    <option value="1">中危漏洞</option>
+                                    <option value="2">低危漏洞</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="vulnerabilityDetailCheck" class="col-form-label">描述</label>
+                            </div>
+                            <div class="col-auto">
+                                <div id="vulnerabilityDetailCheck" placeholder="描述"></div>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="vulnerabilityrepairMethodCheck" class="col-form-label">修复方式</label>
+                            </div>
+                            <div class="col-auto">
+                                <div id="vulnerabilityrepairMethodCheck" rows="3"></div>
+                            </div>
+
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="affectedStaffCheck" class="col-form-label">关联人员</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="text" class="form-control" id="affectedStaffCheck">
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="affectedServieCheck" class="col-form-label">影响业务</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="text" class="form-control" id="affectedServieCheck" placeholder="影响业务"
+                                       required>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    {#                    <div class="col-auto">#}
+                    {#                        <button id="releaseMattersAdd" class="btn btn-primary" type="submit" data-bs-dismiss="modal">#}
+                    {#                            新增#}
+                    {#                        </button>#}
+                    {#                    </div>#}
+                    {#                    <button type="button" class="btn btn-primary">Understood</button>#}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block content %}
     <div class="container-fluid">
@@ -158,7 +261,7 @@
                 <td>
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button type="button" class="btn btn-warning" data-bs-toggle="modal"
-                                data-bs-target="#myModalrelease" data-tid="{{ item.id }}" data-modify="change">查看任务
+                                data-bs-target="#myModalcheck" data-tid="{{ item.id }}" data-modify="check">查看任务
                         </button>
                         <button type="button" class="btn btn-primary" data-tid="{{ item.id }}" data-modify="release">
                             下发任务
@@ -227,9 +330,22 @@
             var myModal = document.getElementById('myModalrelease')
             var myInput = document.getElementById('myInput')
             var editor = new Simditor({
-                textarea: $('#vulnerabilityrepairMethod')
-                //optional options
+                textarea: $('#vulnerabilityrepairMethod'),
+                toolbar: ['bold', 'italic', 'underline', 'strikethrough', 'color', 'ol', 'ul', 'code', 'link', 'image', 'hr', 'alignment'],
+                toolbarFloat: true, upload: {
+                    url: "/savePicture.do",
+                    fileKey: "upload_file"
+                }
             });
+            var vulnerabilityDetailEditor = new Simditor({
+                textarea: $('#vulnerabilityDetail'),
+                toolbar: ['bold', 'italic', 'underline', 'strikethrough', 'color', 'ol', 'ul', 'code', 'link', 'image', 'hr', 'alignment'],
+                toolbarFloat: true, upload: {
+                    url: "/savePicture.do",
+                    fileKey: "upload_file"
+                }
+            });
+
             $("#releaseMattersAdd").click(function () {
                 {#var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();#}
                 var vulnerabilityName = $("#vulnerabilityName").val();
@@ -293,107 +409,27 @@
                             $(targetwid).parent().parent().parent().remove();
                         }
                     );
-                } else if (modify == 'change') {
+                } else if (modify == 'check') {
+                    var tid = $(this).data("tid");
                     data = {
                         csrfmiddlewaretoken: csrftoken,
                         tid: tid,
-                        modify: 'get',
+                        modify: 'check',
                     };
-                    $.get("/workbench/releasematters/getdetil", data, function (result) {
-
-                            var jsonarray = $.parseJSON(result);
-
-
-                            $("#mtitle").text(jsonarray['queryresult'][0]['programName']);
-                            $("#programName").val(jsonarray['queryresult'][0]['programName']);
-                            $("#startDate").val(jsonarray['queryresult'][0]['startDate']);
-                            $("#endDate").val(jsonarray['queryresult'][0]['endDate']);
-                            $("#inPutStream").val(jsonarray['queryresult'][0]['inPutStream']);
-                            $("#inPutStreamSub").val(jsonarray['queryresult'][0]['inPutStreamSub']);
-                            $("#adminStaff").val(jsonarray['queryresult'][0]['adminStaff']);
-                            $("#notes").val(jsonarray['queryresult'][0]['notes']);
-
-                            var programChannel = jsonarray['queryresult'][0]['programChannel'];
-                            $("#programChannel option").each(function () {
-                                if ($(this).text() == programChannel) {
-                                    $(this).prop("selected", 'selected');
-                                }
-                            });
-
-
-                            var isLive = jsonarray['queryresult'][0]['isLive'];
-                            if (isLive == true) {
-                                $("#isLive").prop('checked', 'true');
-                                $("#isLive").val('true');
-                            }
-                            var isRecode = jsonarray['queryresult'][0]['isRecode'];
-                            if (isRecode == true) {
-                                $("#isRecode").prop('checked', 'true');
-                                $("#isRecode").val('true');
-                            }
-                            var adminStafflist = jsonarray['staffquery'];
-                            var adminStaff = jsonarray['queryresult'][0]['adminStaff'];
-                            if ($("#adminStaff option").length == 0) {
-                                for (i in adminStafflist) {
-                                    if (adminStafflist[i]['id'] == adminStaff) {
-                                        $("#adminStaff").append("<option value=" + adminStafflist[i]['id'] + " selected>" + adminStafflist[i]['staffName'] + "</option>");
-                                    } else {
-                                        $("#adminStaff").append("<option value=" + adminStafflist[i]['id'] + ">" + adminStafflist[i]['staffName'] + "</option>");
-                                    }
-
-                                }
-                            }
-                            //$("#adminStaff option").each(function () {
-                            //   if ($(this).text() == adminStaff) {
-                            //     $(this).prop("selected", 'selected');
-                            //  }
-                            // });
-
-
-                            $("button[data-modify='postchange']").attr('data-wid', wid);
-                            $("button[data-modify='postchange']").attr('data-tid', tid);
-
-                        }
-                    );
-                } else if (modify == 'postchange') {
-                    var programName = $("#programName").val();
-                    var startDate = $("#startDate").val();
-                    var endDate = $("#endDate").val();
-                    var inPutStream = $("#inPutStream").val();
-                    var inPutStreamSub = $("#inPutStreamSub").val();
-                    var notes = $("#notes").val();
-                    var programChannel = $("#programChannel").val();
-                    var isLive = $("#isLive").is(':checked');
-                    var isRecode = $("#isRecode").is(':checked');
-                    var adminStaff = $("#adminStaff").val();
-
-                    postdata = {
-                        csrfmiddlewaretoken: csrftoken,
-                        tid: tid,
-                        wid: wid,
-                        programName: programName,
-                        startDate: startDate,
-                        endDate: endDate,
-                        inPutStream: inPutStream,
-                        inPutStreamSub: inPutStreamSub,
-                        notes: notes,
-                        programChannel: programChannel,
-                        isLive: isLive,
-                        isRecode: isRecode,
-                        adminStaff: adminStaff,
-                        modify: 'change',
-                    }
-                    ;
-                    $.post("/workbench/releasematters/change", postdata, function (result) {
-                        if (result == 'success') {
-                            window.location.reload()
-                        } else if (result == 'error') {
-                            alert(result)
-                        }
+                    $.post("/workbench/releasematters/check", data, function (result) {
+                        var jsonarray = $.parseJSON(result);
+                        $("#vulnerabilityNameCheck").text(jsonarray['queryresult'][0]['taskVulnerability__name']);
+                        $("#vulnerabilityDtimeCheck").val(jsonarray['queryresult'][0]['taskVulnerability__dtime']);
+                        $("#CVEserialNumberCheck").val(jsonarray['queryresult'][0]['taskVulnerability__cve_num']);
+                        $("#CNNVDserialNumberCheck").val(jsonarray['queryresult'][0]['taskVulnerability__cnnvd_num']);
+                        $("#vulnerabilityLevelCheck").val(jsonarray['queryresult'][0]['taskVulnerability__level']);
+                        $("#vulnerabilityrepairMethodCheck").html(jsonarray['queryresult'][0]['taskVulnerability__repair_method']);
+                        $("#vulnerabilityDetailCheck").html(jsonarray['queryresult'][0]['taskVulnerability__detail']);
+                        $("#affectedServieCheck").val(jsonarray['queryresult'][0]['affectedServie']);
+                        $("#affectedStaffCheck").val(jsonarray['queryresult'][0]['taskUser__last_name'] + jsonarray['queryresult'][0]['taskUser__first_name']);
                     })
                 }
             });
-            //
         })
     </script>
 {% endblock %}

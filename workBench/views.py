@@ -43,6 +43,7 @@ def releaseMatters(request):
     if checkPrivilege != 0:
         return HttpResponse('ban')
     if request.method == 'GET':
+
         userList = wxseUser.objects.all().values('id', 'first_name', 'last_name')
 
         waitToReleaseMatters = userScheduleControler.objects.filter(status=1).values(
@@ -83,6 +84,25 @@ def releaseMatters(request):
             releaseMattersRelease.status = 2
             releaseMattersRelease.save()
             result = json.dumps({'tid': tid})
+            return HttpResponse(result)
+        elif modify == 'check':
+            tid = request.POST.get('tid')
+            releaseMattersCheck = userScheduleControler.objects.filter(id=tid).values(
+                'status',
+                'taskVulnerability__name',
+                'taskVulnerability__dtime',
+                'taskVulnerability__level',
+                'taskVulnerability__detail',
+                'taskVulnerability__cnnvd_num',
+                'taskVulnerability__cve_num',
+                'taskVulnerability__repair_method',
+                'taskUser__first_name',
+                'taskUser__last_name',
+                'deadLine',
+                'taskAffectIP',
+                'affectedServie',
+            )
+            result = json.dumps({'queryresult': list(releaseMattersCheck), }, cls=DjangoJSONEncoder)
             return HttpResponse(result)
 
         vulnerabilityName = request.POST.get('vulnerabilityName')
