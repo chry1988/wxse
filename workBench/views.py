@@ -48,6 +48,7 @@ def releaseMatters(request):
 
         waitToReleaseMatters = userScheduleControler.objects.filter(status=1).values(
             'id',
+            'taskVulnerability__id',
             'taskVulnerability__name',
             'taskUser__first_name',
             'taskUser__last_name',
@@ -177,7 +178,17 @@ def checkMatters(request):
                                 cls=DjangoJSONEncoder)
             return HttpResponse(result)
         else:
-            checkMattersList = userScheduleControler.objects.all()
+            checkMattersList = userScheduleControler.objects.all().values(
+                'id',
+                'taskVulnerability__id',
+                'taskVulnerability__name',
+                'affectedServie',
+                'taskVulnerability__level',
+                'status',
+                'deadLine',
+                'taskUser__first_name',
+                'taskUser__last_name',
+            )
             checkMattersListPage = Paginator(checkMattersList, 20)
             if request.method == "GET":
                 page = request.GET.get('page')
@@ -214,20 +225,47 @@ def toDoMatters(request):
     if request.method == 'GET':
         targetUser = request.user.id
         page = request.GET.get('page')
-
-        toDoTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=2).values(
-            'id',
-            'taskVulnerability__id',
-            'taskVulnerability__name',
-            'taskVulnerability__detail',
-            'taskVulnerability__level',
-            'taskVulnerability__repair_method',
-            'taskVulnerability__cve_num',
-            'taskVulnerability__cnnvd_num',
-            'taskVulnerability__dtime',
-            'taskVulnerability__professionalwork__workName',
-            'taskAffectIP__ip'
-        )
+        VulnerabilityId = request.GET.get('VulnerabilityId')
+        VulnerabilityName = request.GET.get('VulnerabilityName')
+        VulnerabilityAffectedServie = request.GET.get('VulnerabilityAffectedServie')
+        VulnerabilityUser = request.GET.get('VulnerabilityUser')
+        VulnerabilityLevel = request.GET.get('VulnerabilityLevel')
+        if VulnerabilityId or VulnerabilityName or VulnerabilityAffectedServie or VulnerabilityUser or VulnerabilityLevel:
+            print('success', VulnerabilityLevel, VulnerabilityId, VulnerabilityName, )
+            toDoTasks = userScheduleControler.objects.filter(Q(taskUser=targetUser), Q(status=2),
+                                                             Q(
+                                                                 Q(taskVulnerability__name=VulnerabilityName) |
+                                                                 Q(taskVulnerability__id=VulnerabilityId) |
+                                                                 Q(affectedServie=VulnerabilityAffectedServie) |
+                                                                 Q(taskVulnerability__level=VulnerabilityLevel)
+                                                             )
+                                                             ).values(
+                'id',
+                'taskVulnerability__id',
+                'taskVulnerability__name',
+                'taskVulnerability__detail',
+                'taskVulnerability__level',
+                'taskVulnerability__repair_method',
+                'taskVulnerability__cve_num',
+                'taskVulnerability__cnnvd_num',
+                'taskVulnerability__dtime',
+                'affectedServie',
+                'taskAffectIP__ip'
+            )
+        else:
+            toDoTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=2).values(
+                'id',
+                'taskVulnerability__id',
+                'taskVulnerability__name',
+                'taskVulnerability__detail',
+                'taskVulnerability__level',
+                'taskVulnerability__repair_method',
+                'taskVulnerability__cve_num',
+                'taskVulnerability__cnnvd_num',
+                'taskVulnerability__dtime',
+                'affectedServie',
+                'taskAffectIP__ip'
+            )
         toDtasksPage = Paginator(toDoTasks, 20)
         if request.method == "GET":
             # 获取 url 后面的 page 参数的值, 首页不显示 page 参数, 默认值是 1

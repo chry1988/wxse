@@ -94,31 +94,31 @@
             </ol>
         </nav>
     </div>
-    <form class="row g-3">
+    <form class="row g-3" action="/workbench/todomatters" method="get">
         <div class="col-auto">
 
-            <input type="text" class="form-control" id="validationDefault01" placeholder="漏洞编号" required>
+            <input type="text" class="form-control" id="VulnerabilityId" name="VulnerabilityId" placeholder="漏洞编号">
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="URL路径" required>
+            <input type="text" class="form-control" id="validationDefault01" placeholder="URL路径" disabled>
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault03" placeholder="漏洞名称" required>
+            <input type="text" class="form-control" id="VulnerabilityName" name="VulnerabilityName" placeholder="漏洞名称">
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="影响业务" required>
+            <input type="text" class="form-control" id="VulnerabilityAffectedServie" name="VulnerabilityAffectedServie" placeholder="影响业务">
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="IP地址" required>
+            <input type="text" class="form-control" id="validationDefault02" placeholder="IP地址">
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="联系人" required>
+            <input type="text" class="form-control" id="VulnerabilityUser" name="VulnerabilityUser" placeholder="联系人">
         </div>
         <div class="col-auto">
-            <input type="text" class="form-control" id="validationDefault02" placeholder="组织机构" required>
+            <input type="text" class="form-control" id="validationDefault02" placeholder="组织机构" disabled>
         </div>
         <div class="col-auto">
-            <select class="form-select" id="validationDefault04" required>
+            <select class="form-select" id="VulnerabilityLevel"  name="VulnerabilityLevel" required>
                 <option selected disabled value="">请选择漏洞级别</option>
                 <option value="0">高危漏洞</option>
                 <option value="1">中危漏洞</option>
@@ -126,7 +126,7 @@
             </select>
         </div>
         <div class="col-auto">
-            <button class="btn btn-primary" type="submit">查询</button>
+            <button class="btn btn-primary" type="submit" id="queryList">查询</button>
         </div>
     </form>
     <table class="table table-striped table-hover">
@@ -150,7 +150,7 @@
                 <th scope="row">{{ forloop.counter }}</th>
                 <td>{{ item.taskVulnerability__id }}</td>
                 <td>{{ item.taskVulnerability__name }}</td>
-                <td>{{ item.taskVulnerability__professionalwork__workName }}</td>
+                <td>{{ item.affectedServie }}</td>
                 <td><span data-level="{{ item.taskVulnerability__level }}"></span></td>
                 <td>{{ item.taskAffectIP__ip }}</td>
                 <td>
@@ -211,6 +211,22 @@
                 headers:
                     {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
             });
+            {#$("button[id=queryList]").click(function () {#}
+            {#    var VulnerabilityId = $('#VulnerabilityId').val()#}
+            {#    var VulnerabilityName = $('#VulnerabilityName').val()#}
+            {#    var VulnerabilityAffectedServie = $('#VulnerabilityAffectedServie').val()#}
+            {#    var VulnerabilityUser = $('#VulnerabilityUser').val()#}
+            {#    var VulnerabilityLevel = $('#VulnerabilityLevel').val()#}
+            {#    var queryList = 'queryList'#}
+            {#    data = {#}
+            {#        queryList: 'queryList',#}
+            {#        VulnerabilityId: VulnerabilityId,#}
+            {#        VulnerabilityName: VulnerabilityName,#}
+            {#        VulnerabilityAffectedServie: VulnerabilityAffectedServie,#}
+            {#        VulnerabilityUser: VulnerabilityUser,#}
+            {#        VulnerabilityLevel: VulnerabilityLevel,#}
+            {#    }#}
+            {#    $.get('/workbench/todomatters', data)});#}
             $("button[id=waitingtofix]").click(function () {
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                 var tid = $(this).data("tid");
@@ -249,7 +265,7 @@
                     var jsonarray = $.parseJSON(result);
                     {#alert(jsonarray['queryProfessionsalWrokResult']);#}
                     $("#vunerabilityname").text(jsonarray['queryResult'][0]['name']);
-                    $("#vunerabilitydetail").text(jsonarray['queryResult'][0]['detail']);
+                    $("#vunerabilitydetail").html(jsonarray['queryResult'][0]['detail']);
                     $("#vunerabilitylevel").text(jsonarray['queryResult'][0]['level']);
                     $("#vunerabilityrepair_method").html(jsonarray['queryResult'][0]['repair_method']);
                     $("#vunerabilitycve_num").text(jsonarray['queryResult'][0]['cve_num']);

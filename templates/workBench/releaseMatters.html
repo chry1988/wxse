@@ -242,6 +242,7 @@
             <th scope="col">IP地址</th>
             <th scope="col">IP端口</th>
             <th scope="col">联系人</th>
+            <th scope="col">截止时间</th>
             <th scope="col">操作</th>
         </tr>
         </thead>
@@ -249,12 +250,14 @@
         {% for item in waitToReleaseMattersPage %}
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ item.vulnerability__id }}</td>
+                <td>{{ item.taskVulnerability__id }}</td>
                 <td>{{ item.taskVulnerability__name }}</td>
                 <td>{{ item.affectedServie }}</td>
                 <td>
                     <span data-level="{{ item.taskVulnerability__level }}"></span>
                 </td>
+                <td>-</td>
+                <td>-</td>
                 <td>{{ item.taskUser__last_name }}{{ item.taskUser__first_name }}</td>
                 <td>{{ item.deadLine }}</td>
 
@@ -418,7 +421,7 @@
                     };
                     $.post("/workbench/releasematters/check", data, function (result) {
                         var jsonarray = $.parseJSON(result);
-                        $("#vulnerabilityNameCheck").text(jsonarray['queryresult'][0]['taskVulnerability__name']);
+                        $("#vulnerabilityNameCheck").val(jsonarray['queryresult'][0]['taskVulnerability__name']);
                         $("#vulnerabilityDtimeCheck").val(jsonarray['queryresult'][0]['taskVulnerability__dtime']);
                         $("#CVEserialNumberCheck").val(jsonarray['queryresult'][0]['taskVulnerability__cve_num']);
                         $("#CNNVDserialNumberCheck").val(jsonarray['queryresult'][0]['taskVulnerability__cnnvd_num']);

@@ -151,8 +151,8 @@
             <th scope="col">漏洞名称</th>
             <th scope="col">影响业务</th>
             <th scope="col">漏洞级别</th>
-            <th scope="col">IP地址</th>
-            <th scope="col">IP端口</th>
+            <th scope="col">处理进度</th>
+            <th scope="col">截止时间</th>
             <th scope="col">联系人</th>
             <th scope="col">操作</th>
         </tr>
@@ -161,11 +161,13 @@
         {% for item in checkMattersListPage %}
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ item.status }}</td>
-                <td>{{ item.taskVulnerability }}</td>
-                <td>{{ item.taskUser }}</td>
+                <td>{{ item.taskVulnerability__id }}</td>
+                <td>{{ item.taskVulnerability__name }}</td>
+                <td>{{ item.affectedServie }}</td>
+                <td><span data-level="{{ item.taskVulnerability__level }}"></span></td>
+                <td><span data-status="{{ item.status }}"></span></td>
                 <td>{{ item.deadLine }}</td>
-                <td>{{ item.taskAffectIP }}</td>
+                <td>{{ item.taskUser__last_name }}{{ item.taskUser__first_name }}</td>
                 <td>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
@@ -205,6 +207,54 @@
 {% block customerjs %}
     <script type="text/javascript">
         $(document).ready(function () {
+            $("span").each(function () {
+                if ($(this).data('level') == 0) {
+                    $(this).removeClass();
+                    $(this).addClass("badge bg-danger");
+                    $(this).text('高危漏洞')
+                } else if ($(this).data('level') == 1) {
+                    $(this).removeClass();
+                    $(this).addClass("badge bg-warning");
+                    $(this).text('中危漏洞')
+                } else if ($(this).data('level') == 2) {
+                    $(this).removeClass();
+                    $(this).addClass("badge bg-primary");
+                    $(this).text('低危漏洞')
+                }
+                if ($(this).data('status') == 0) {
+                    $(this).removeClass();
+                    $(this).addClass("badge bg-primary");
+                    $(this).text('录入')
+                } else if ($(this).data('status') == 1) {
+                    $(this).removeClass();
+                    $(this).addClass("badge bg-primary");
+                    $(this).text('已提交')
+                } else if ($(this).data('status') == 2) {
+                    $(this).removeClass();
+                    $(this).addClass("badge bg-primary");
+                    $(this).text('已下发')
+                } else if ($(this).data('status') == 3) {
+                    $(this).removeClass();
+                    $(this).addClass("badge bg-warning");
+                    $(this).text('已修复')
+                } else if ($(this).data('status') == 4) {
+                    $(this).removeClass();
+                    $(this).addClass("badge bg-warning");
+                    $(this).text('暂缓修复')
+                } else if ($(this).data('status') == 5) {
+                    $(this).removeClass();
+                    $(this).addClass("badge bg-primary");
+                    $(this).text('已校验')
+                } else if ($(this).data('status') == 6) {
+                    $(this).removeClass();
+                    $(this).addClass("badge bg-primary");
+                    $(this).text('已办结')
+                } else if ($(this).data('status') == 7) {
+                    $(this).removeClass();
+                    $(this).addClass("badge bg-primary");
+                    $(this).text('已完成')
+                }
+            });
             $("td button").click(function () {
                 var tid = $(this).data("tid");
                 var targetURL = "/workbench/checkmatters/getdetail?modify=getdetail&tid=" + tid
