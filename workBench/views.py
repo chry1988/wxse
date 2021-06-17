@@ -21,6 +21,9 @@ def checkUserPrivileges(request, funRequest):
     else:
         return HttpResponse('ban')
 
+def adminUrls():
+    pass
+
 
 def myWorkBench(request):
     '''
@@ -378,8 +381,11 @@ def finishMatters(request):
             'id',
             'taskVulnerability__id',
             'taskVulnerability__name',
+            'affectedServie',
             'taskVulnerability__detail',
             'taskVulnerability__level',
+            'taskUser__first_name',
+            'taskUser__last_name',
             'taskVulnerability__repair_method',
             'taskVulnerability__cve_num',
             'taskVulnerability__cnnvd_num',

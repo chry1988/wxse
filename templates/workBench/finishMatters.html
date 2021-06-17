@@ -100,9 +100,11 @@
                 <th scope="row">{{ forloop.counter }}</th>
                 <td>{{ item.taskVulnerability__id }}</td>
                 <td>{{ item.taskVulnerability__name }}</td>
-                <td>{{ item.taskVulnerability__professionalwork__workName }}</td>
+                <td>{{ item.affectedServie }}</td>
                 <td><span data-level="{{ item.taskVulnerability__level }}"></span></td>
-                <td>{{ item.taskAffectIP__ip }}</td>
+                <td>-</td>
+                <td>-</td>
+                <td>{{ item.taskUser__last_name }}{{ item.taskUser__first_name }}</td>
                 <td>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
