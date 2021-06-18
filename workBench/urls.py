@@ -23,5 +23,6 @@ urlpatterns = [
     path('checkmatters/getdetail', views.checkMatters),
     path('checkmatters/pass', views.checkMatters),
     path('checkmatters/sendback', views.checkMatters),
+    path('navbarMenu',views.navbarMenu),
 
 ]

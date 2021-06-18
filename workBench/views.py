@@ -21,6 +21,7 @@ def checkUserPrivileges(request, funRequest):
     else:
         return HttpResponse('ban')
 
+
 def adminUrls():
     pass
 
@@ -509,3 +510,18 @@ def warningNoticeAdd(request):
             noticeDetail=noticeDetail,
         )
     return render(request, 'workBench/warningNoticeAdd.html', )
+
+
+def navbarMenu(request):
+    checkUser = request.user.id
+    checkPrivilege = wxseUser.objects.get(id=checkUser).userPrivilege
+    menuList = [
+        ['发布事项', '/workbench/releasematters'],
+        ['检查事项', '/workbench/checkmatters'],
+        ['添加预警通告', '/workbench/warningnotice/add'],
+    ]
+    result = json.dumps(menuList, cls=DjangoJSONEncoder)
+    if checkPrivilege == 0:
+        return HttpResponse(result)
+    else:
+        return HttpResponse('ban')
