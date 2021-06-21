@@ -22,7 +22,7 @@
                 <label for="noticeDate" class="col-form-label">通告时间</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control" id="noticeDate" placeholder="通告时间" required>
+                <input type="text" class="form-control" id="noticeDate" required>
             </div>
         </div>
         <div class="row g-3 align-items-center">
@@ -30,7 +30,7 @@
                 <label for="noticeName" class="col-form-label">通告名称</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control" id="noticeName" placeholder="通告名称" required>
+                <input type="text" class="form-control" id="noticeName" required>
             </div>
             <div class="col-auto">
                 <label for="noticeLevel" class="col-form-label">严重级别</label>
@@ -49,13 +49,13 @@
                 <label for="CVEserialNumber" class="col-form-label">CVE编号</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control" id="CVEserialNumber" placeholder="CVE编号" required>
+                <input type="text" class="form-control" id="CVEserialNumber" required>
             </div>
             <div class="col-auto">
                 <label for="CNNVDserialNumber" class="col-form-label">CNNVD编号</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control" id="CNNVDserialNumber" placeholder="CNNVD编号" required>
+                <input type="text" class="form-control" id="CNNVDserialNumber" required>
             </div>
         </div>
         <div class="row g-3 align-items-center">
@@ -63,7 +63,7 @@
                 <label for="affectedVendor" class="col-form-label">影响厂商</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control" id="affectedVendor" placeholder="影响厂商" required>
+                <input type="text" class="form-control" id="affectedVendor" required>
             </div>
         </div>
 
@@ -72,10 +72,21 @@
                 <label for="noticeDetail" class="col-form-label">通告描述</label>
             </div>
             <div class="col-auto">
-                <textarea type="text" class="form-control" id="noticeDetail" placeholder="通告描述" required></textarea>
+                <textarea type="text" class="form-control" id="noticeDetail" required></textarea>
             </div>
         </div>
-
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="uploadNote" class="col-form-label">上传附件</label>
+            </div>
+            <div class="col-auto">
+                <div class="input-group">
+                    <input type="file" class="form-control" id="uploadNote"
+                           aria-label="Upload">
+                    <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAdd">上传</button>
+                </div>
+            </div>
+        </div>
         <div class="col-auto">
             <button id="warningNoticeAdd" class="btn btn-primary" type="submit">新增</button>
         </div>
@@ -95,6 +106,10 @@
             var editor = new Simditor({
                 textarea: $('#noticeDetail')
                 //optional options
+            });
+            $("button[id=inputGroupFileAdd]").click(function (){
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
             });
             $("button[id=warningNoticeAdd]").click(function () {
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
@@ -116,7 +131,7 @@
                     CVEserialNumber: CVEserialNumber,
                     CNNVDserialNumber: CNNVDserialNumber,
                     affectedVendor: affectedVendor,
-                    noticeDetail:noticeDetail,
+                    noticeDetail: noticeDetail,
                 };
                 $.post("/workbench/warningnotice/add", data, function (result) {
                 })

@@ -26,6 +26,15 @@
     </ul>
 
 {% endblock %}
+{% block buttomContent %}
+    <div class="container-fluid" style="background-color: #171f34">
+        <div class="row">
+            <div class="col-md-6 offset-md-8">
+                <p id="lastLogin" style="color: #5c636a"></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 {% block customerjs2 %}
     <script type="text/javascript">
         $(document).ready(function () {
@@ -38,6 +47,10 @@
                     autoMenuHtml += "</li>"
                 }
                 $("div [data-navbar='menu']").html(autoMenuHtml)
+            });
+            $.get("/workbench/lastlogin", function (result) {
+                var jsonarray = $.parseJSON(result);
+                $('#lastLogin').text('上一次登录时间：' + jsonarray)
             })
         })
     </script>

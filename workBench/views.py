@@ -42,6 +42,7 @@ def myWorkBench(request):
     finishTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=7).count()
     return render(request, 'workBench/myWorkBench.html', {'upcomingTasks': upComingTasks, 'finishTasks': finishTasks})
 
+
 @login_required(login_url='/accounts/login')
 def releaseMatters(request):
     checkUser = request.user.id
@@ -147,6 +148,7 @@ def releaseMatters(request):
             )
 
         return HttpResponse('ok')
+
 
 @login_required(login_url='/accounts/login')
 def checkMatters(request):
@@ -357,6 +359,7 @@ def toDoMattersDetail(request):
         doResult.save()
         return None
 
+
 @login_required(login_url='/accounts/login')
 def finishMatters(request):
     targetUser = request.user.id
@@ -399,6 +402,7 @@ def finishMatters(request):
 
     return render(request, 'workBench/finishMatters.html', {'finishTasks': finishTasks, })
 
+
 @login_required(login_url='/accounts/login')
 def closingMatters(request):
     targetUser = request.user.id
@@ -424,6 +428,7 @@ def vulnerabilityDetailView(request):
 
 def scheduleDetailView(request):
     return None
+
 
 @login_required(login_url='/accounts/login')
 def warningNotice(request):
@@ -464,6 +469,7 @@ def warningNotice(request):
         result = json.dumps({'queryresult': list(returnData), }, cls=DjangoJSONEncoder)
         return HttpResponse(result)
 
+
 @login_required(login_url='/accounts/login')
 def warningNoticeDetail(request):
     if request.method == 'GET':
@@ -481,6 +487,31 @@ def warningNoticeDetail(request):
         affectedComponent = models.CharField(max_length=255, verbose_name='影响组件')
         noticeDetail = models.TextField(verbose_name='通告描述')
     return render(request, 'workBench/warningNotice.html', )
+
+
+from configureDataBase.forms import UploadFileForm
+import os
+
+
+def handle_uploaded_file(fileName):
+    writeCatalogue = os.path.join(os.path.abspath('..'), 'uploadFiles')
+    fileName = os.path.join(writeCatalogue, fileName)
+    with open(fileName, 'wb+') as destination:
+        for chunk in fileName.chunks():
+            destination.write(chunk)
+
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            return HttpResponse('ok')
+            # return HttpResponseRedirect('/success/url/')
+    else:
+        form = UploadFileForm()
+    return render(request, 'upload.html', {'form': form})
+
 
 @login_required(login_url='/accounts/login')
 def warningNoticeAdd(request):
@@ -527,3 +558,10 @@ def navbarMenu(request):
         return HttpResponse(result)
     else:
         return HttpResponse('ban')
+
+def lastLogin(request):
+    checkUser = request.user.id
+    checkPrivilege = wxseUser.objects.get(id=checkUser).last_login
+    result = json.dumps(checkPrivilege, cls=DjangoJSONEncoder)
+    return HttpResponse(result)
+

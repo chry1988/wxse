@@ -3,6 +3,7 @@ from .models.workBench import userScheduleControler, adminScheduleControler, pro
 from .models.vulnerabilityControler import vulnerability, professionalWork
 from .models.warningNotice import NoticeDetial
 from .models.internetProtocolPool import IpV4
+from .models.uploadFiles import *
 
 
 class userScheduleControlerAdmin(admin.ModelAdmin):
@@ -52,3 +53,10 @@ class progressNoteAdmin(admin.ModelAdmin):
 
 
 admin.site.register(progressNote, progressNoteAdmin)
+
+
+class uploadFilesManageAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(uploadFilesManage, uploadFilesManageAdmin)
