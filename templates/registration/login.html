@@ -29,27 +29,45 @@
 </head>
 <body class="text-center">
 <main class="form-signin">
-    <form style="width: 100%;max-width: 330px;padding: 15px;margin: auto;">
+    <form style="width: 100%;max-width: 330px;padding: 15px;margin: auto;" method="post" action="{% url 'login' %}">
         {#        <img class="mb-4" src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">#}
-        <h1 class="h3 mb-3 fw-normal">登录页面</h1>
 
-        <div class="form-floating">
-            <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com">
-            <label for="floatingInput">账号
-            </label>
-        </div>
-        <div class="form-floating">
-            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-            <label for="floatingPassword">密码</label>
-        </div>
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td>
+                    <h1 class="h3 mb-3 fw-normal">登录页面</h1>
+                </td>
+            </tr>
+            <div class="form-floating">
+                <tr>
+                    <td> {{ form.username }}</td>
+                    {#            <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com">#}
+                    {#            <label for="floatingInput">账号#}
+                </tr>
+            </div>
+            <div class="form-floating">
+                <tr>
+                    <td>
+                        {{ form.password }}
+                    </td>
+                </tr>
+                {#            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">#}
+                {#            <label for="floatingPassword">密码</label>#}
+            </div>
+            <tr>
+                <td>
+                    <button class="w-100 btn btn-lg btn-primary" type="submit" value="login">登录</button>
+                    <p class="mt-5 mb-3 text-muted">© 2021</p>
+                </td>
+            </tr>
+        </table>
 
         {#        <div class="checkbox mb-3">#}
         {#            <label>#}
         {#                <input type="checkbox" value="remember-me"> Remember me#}
         {#            </label>#}
         {#        </div>#}
-        <button class="w-100 btn btn-lg btn-primary" type="submit">登录</button>
-        <p class="mt-5 mb-3 text-muted">© 2021</p>
     </form>
 </main>
 </body>

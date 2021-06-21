@@ -11,7 +11,7 @@
     <script src={% static 'js/jquery/jquery-3.6.0.min.js' %}></script>
     <script src={% static 'js/popperjs/popper.min.js' %}></script>
     <script src={% static 'js/bootstrap-5.0.0-beta3-dist/js/bootstrap.min.js' %}></script>
-{#    <script type="text/javascript" src={% static "js/simple-module-master/dist/simple-module.js" %}></script>#}
+    {#    <script type="text/javascript" src={% static "js/simple-module-master/dist/simple-module.js" %}></script>#}
     <script type="text/javascript" src={% static "js/simple-module-2.0.6/module.js" %}></script>
     <script type="text/javascript" src={% static "js/simple-hotkeys-master/hotkeys.js" %}></script>
     <script type="text/javascript" src={% static "js/simple-uploader-master/simple-uploader.js" %}></script>
@@ -26,17 +26,28 @@
 {% block subTitle %}
 {% endblock %}
 <div>
-    <div style="max-height: 50px">
+    <div>
         {% block navbar %}
+            <div class="container-fluid" style="background-color: rgba(92,99,106,0.1)">
+                <ul class="nav justify-content-end">
+                    <li class="nav-item">
+                        <a type="button" class="btn btn-outline-secondary" href="/accounts/logout">登出</a>
+                    </li>
+                </ul>
+            </div>
         {% endblock %}
     </div>
-    <div style="width:10%;margin-top: 50px;float: left;">
-        {% block sidebar %}
-        {% endblock %}
-    </div>
-    <div style="width:90%;margin-top: 50px;float: right">
-        {% block content %}
-        {% endblock %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-1" style="width:10%;float: left; background-color: #171f34">
+                {% block sidebar %}
+                {% endblock %}
+            </div>
+            <div class="col" style="width:90%;float: right;background-color: rgba(147,190,232,0.38)">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
     </div>
 </div>
 {% block customerjs %}

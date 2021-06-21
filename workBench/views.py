@@ -1,6 +1,7 @@
 from django.shortcuts import render, HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, InvalidPage
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
 from django.db.models import Count
@@ -26,6 +27,7 @@ def adminUrls():
     pass
 
 
+@login_required(login_url='/accounts/login')
 def myWorkBench(request):
     '''
     :param request:
@@ -40,7 +42,7 @@ def myWorkBench(request):
     finishTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=7).count()
     return render(request, 'workBench/myWorkBench.html', {'upcomingTasks': upComingTasks, 'finishTasks': finishTasks})
 
-
+@login_required(login_url='/accounts/login')
 def releaseMatters(request):
     checkUser = request.user.id
     checkPrivilege = wxseUser.objects.get(id=checkUser).userPrivilege
@@ -146,7 +148,7 @@ def releaseMatters(request):
 
         return HttpResponse('ok')
 
-
+@login_required(login_url='/accounts/login')
 def checkMatters(request):
     if request.method == 'GET':
         modify = request.GET.get('modify')
@@ -224,7 +226,7 @@ def checkMatters(request):
             return HttpResponse(result)
 
 
-# @csrf_protect
+@login_required(login_url='/accounts/login')
 def toDoMatters(request):
     if request.method == 'GET':
         targetUser = request.user.id
@@ -311,7 +313,7 @@ def toDoMatters(request):
         return HttpResponse('success')
 
 
-# @csrf_protect
+@login_required(login_url='/accounts/login')
 def toDoMattersDetail(request):
     if request.method == 'GET':
         searchId = request.GET.get('tid')
@@ -355,7 +357,7 @@ def toDoMattersDetail(request):
         doResult.save()
         return None
 
-
+@login_required(login_url='/accounts/login')
 def finishMatters(request):
     targetUser = request.user.id
 
@@ -397,7 +399,7 @@ def finishMatters(request):
 
     return render(request, 'workBench/finishMatters.html', {'finishTasks': finishTasks, })
 
-
+@login_required(login_url='/accounts/login')
 def closingMatters(request):
     targetUser = request.user.id
     closingTasks = userScheduleControler.objects.filter(taskUser=targetUser, status=7)
@@ -423,7 +425,7 @@ def vulnerabilityDetailView(request):
 def scheduleDetailView(request):
     return None
 
-
+@login_required(login_url='/accounts/login')
 def warningNotice(request):
     if request.method == 'GET':
         noticeNumQuery = request.GET.get('noticeNumQuery')
@@ -462,7 +464,7 @@ def warningNotice(request):
         result = json.dumps({'queryresult': list(returnData), }, cls=DjangoJSONEncoder)
         return HttpResponse(result)
 
-
+@login_required(login_url='/accounts/login')
 def warningNoticeDetail(request):
     if request.method == 'GET':
         warningNoticeResult = NoticeDetial.objects.all()
@@ -480,7 +482,7 @@ def warningNoticeDetail(request):
         noticeDetail = models.TextField(verbose_name='通告描述')
     return render(request, 'workBench/warningNotice.html', )
 
-
+@login_required(login_url='/accounts/login')
 def warningNoticeAdd(request):
     if request.method == 'GET':
         warningNoticeResult = NoticeDetial.objects.all()
