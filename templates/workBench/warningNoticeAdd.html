@@ -107,9 +107,11 @@
                 textarea: $('#noticeDetail')
                 //optional options
             });
-            $("button[id=inputGroupFileAdd]").click(function (){
-                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-
+            var uploader = simple.uploader({
+                url: '/workbench/upload/'
+            });
+            $('#inputGroupFileAdd').click(function (e) {
+                uploader.upload($('#uploadNote').files);
             });
             $("button[id=warningNoticeAdd]").click(function () {
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();

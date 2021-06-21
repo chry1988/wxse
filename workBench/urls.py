@@ -25,4 +25,5 @@ urlpatterns = [
     path('checkmatters/sendback', views.checkMatters),
     path('navbarMenu', views.navbarMenu),
     path('lastlogin', views.lastLogin),
+    path('upload', views.uploadFile),
 ]

@@ -501,7 +501,7 @@ def handle_uploaded_file(fileName):
             destination.write(chunk)
 
 
-def upload_file(request):
+def uploadFile(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
