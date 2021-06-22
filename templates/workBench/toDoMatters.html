@@ -84,16 +84,10 @@
         </div>
     </div>
 {% endblock %}
+{% block topLinks %}
+    <li class="breadcrumb-item active" aria-current="page">待办事项</li>
+{% endblock %}
 {% block content %}
-    <div class="container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">url1</a></li>
-                <li class="breadcrumb-item"><a href="#">url2</a></li>
-                <li class="breadcrumb-item active" aria-current="page">url3</li>
-            </ol>
-        </nav>
-    </div>
     <form class="row g-3" action="/workbench/todomatters" method="get">
         <div class="col-auto">
 

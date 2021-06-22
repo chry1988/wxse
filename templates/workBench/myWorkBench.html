@@ -1,16 +1,12 @@
 {% extends "mainHtml.html" %}
+{% block topLinks %}
+    <li class="breadcrumb-item active" aria-current="page">我的工作台</li>
+{% endblock %}
 {% block content %}
     <div class="container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">url1</a></li>
-                <li class="breadcrumb-item"><a href="#">url2</a></li>
-                <li class="breadcrumb-item active" aria-current="page">url3</li>
-            </ol>
-        </nav>
-
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4 gy-5">
+
                 <div class="card">
                     <div class="card-header">待办事项 <small>查看更多</small></div>
                     <div class="card-body">
@@ -20,7 +16,7 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4 gy-5">
                 <div class="card">
                     <div class="card-header">已办事项 <small>查看更多</small></div>
                     <div class="card-body">

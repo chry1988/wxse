@@ -1,4 +1,52 @@
 {% extends "baseHtml.html" %}
+{% block navbar %}
+
+    <div class="container-fluid bg-dark" style="background-color: #171f34">
+        <div class="row">
+            <div class="col-1" style="width:10%;">
+                <div class="btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        用户
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <li><a class="dropdown-item" href="#">Dropdown link</a></li>
+                        <li><a class="dropdown-item" href="#">Dropdown link</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-1">
+                <button type="button" class="btn btn-light" id="flushThisPage">刷新</button>
+            </div>
+            <div class="col-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/workbench/myworkbench">首页</a></li>
+                    {% block topLinks %}
+                    {% endblock %}
+                </ol>
+            </div>
+            <div class="col-1">
+                <div class="btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        新消息(0)
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <li><a class="dropdown-item" href="#">Dropdown link</a></li>
+                        <li><a class="dropdown-item" href="#">Dropdown link</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-1">
+                <ul class="nav justify-content-end">
+                    <li class="nav-item">
+                        <a type="button" class="btn btn-outline-secondary" href="/accounts/logout">登出</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 {% block sidebar %}
 
     <ul class="nav flex-column">
@@ -7,7 +55,7 @@
         </li>
         漏洞管理
         <li class="nav-item">
-            <a class="nav-link" href="/workbench/todomatters">待办事项 <span class="badge bg-primary rounded-pill">14</span></a>
+            <a class="nav-link" href="/workbench/todomatters">待办事项 <span class="badge bg-primary rounded-pill">0</span></a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/workbench/finishmatters">已办事项</a>
@@ -51,6 +99,9 @@
             $.get("/workbench/lastlogin", function (result) {
                 var jsonarray = $.parseJSON(result);
                 $('#lastLogin').text('上一次登录时间：' + jsonarray)
+            });
+            $('#flushThisPage').click(function () {
+                window.location.reload()
             })
         })
     </script>
