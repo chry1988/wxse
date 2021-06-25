@@ -26,4 +26,5 @@ urlpatterns = [
     path('navbarMenu', views.navbarMenu),
     path('lastlogin', views.lastLogin),
     path('upload', views.uploadFile),
+    path('download',views.warningNoticeAppendixDownload),
 ]

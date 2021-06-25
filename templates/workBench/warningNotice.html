@@ -63,12 +63,13 @@
                 </div>
                 <div class="modal-footer">
                     <div class="col-auto">
-                        <label for="validationCustom01" class="form-label">附件</label>
-                        <input type="text" class="form-control" id="validationDefault02" placeholder="附件"
+                        <label for="filesName" class="form-label">附件</label>
+                        <input type="text" class="form-control" id="filesName" placeholder="附件"
                                required>
+                        <button class="btn btn-primary" type="submit" id="filesID" data-filesID="">下载</button>
                     </div>
                     <div class="col-auto">
-                        <button class="btn btn-primary" type="submit">下载</button>
+
                     </div>
                 </div>
             </div>
@@ -173,6 +174,10 @@
                 }
             );
 
+            $("#filesID").click(function () {
+                fileTragetURL = "/workbench/download?filesID=" + $('#filesID').attr('data-filesID')
+                window.location.href = fileTragetURL
+            })
             $("td button").click(function () {
                 var wid = $(this).data("wid");
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
@@ -190,6 +195,8 @@
                     $("#CNNVDserialNumber").val(jsonarray['queryresult'][0]['CNNVDserialNumber']);
                     $("#affectedVendor").val(jsonarray['queryresult'][0]['affectedVendor']);
                     $("#noticeDetail").html(jsonarray['queryresult'][0]['noticeDetail']);
+                    $("#filesName").val(jsonarray['queryresult'][0]['uploadfilesmanage__fileName']);
+                    $("#filesID").attr('data-filesID', jsonarray['queryresult'][0]['uploadfilesmanage__id']);
                 })
             });
         })

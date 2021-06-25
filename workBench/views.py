@@ -467,6 +467,7 @@ def warningNotice(request):
             'noticeDetail',
             'uploadfilesmanage__fileName',
             'uploadfilesmanage__fileUploadTo',
+            'uploadfilesmanage__id',
         )
         result = json.dumps({'queryresult': list(returnData), }, cls=DjangoJSONEncoder)
         return HttpResponse(result)
@@ -516,11 +517,36 @@ def uploadFile(request):
             fileName=updateFileName,
             fileUploadTo=fileFullPath)
         result = json.dumps({'FilesID': FilesID.id, }, cls=DjangoJSONEncoder)
+        print(FilesID.id)
         return HttpResponse(result)
     else:
         return HttpResponse('ban')
     #     form = UploadFileForm()
     # return render(request, 'upload.html', {'form': form})
+
+
+from django.http import StreamingHttpResponse,Http404
+from django.utils.encoding import escape_uri_path
+
+@login_required(login_url='/accounts/login')
+def warningNoticeAppendixDownload(request):
+    if request.method == 'GET':
+        warningNoticeResult = NoticeDetial.objects.all()
+        filesID = request.GET.get('filesID')
+        # filepath = os.path.join(settings.MEDIA_ROOT, filename)
+        fileObj = uploadFilesManage.objects.get(id=filesID)
+        filepath = fileObj.fileUploadTo
+        filename = fileObj.fileName
+        try:
+            print('attachment;filename="%s"' % filename)
+            response = StreamingHttpResponse(open(filepath, 'rb'))
+            # response = FileResponse(fp)
+            response['Content-Type'] = 'application/octet-stream'
+            # response['Content-Disposition'] = f'attachment;filename="%s"' % filename
+            response['Content-Disposition'] = f'attachment;filename={escape_uri_path(filename)}'
+            return response
+        except Exception:
+            raise Http404
 
 
 @login_required(login_url='/accounts/login')
@@ -543,7 +569,7 @@ def warningNoticeAdd(request):
               noticeLevel,
               CVEserialNumber,
               affectedVendor, )
-        targetNoticeDetial= NoticeDetial.objects.create(
+        targetNoticeDetial = NoticeDetial.objects.create(
             id=noticeNum,
             noticeDate=noticeDate,
             noticeName=noticeName,
@@ -554,8 +580,9 @@ def warningNoticeAdd(request):
             noticeDetail=noticeDetail,
         )
         if uploadNote:
-            uploadFilesLink=uploadFilesManage.objects.get(id=uploadNote)
-            uploadFilesLink.linkToNoticeDetial=targetNoticeDetial.id
+            print(uploadNote)
+            uploadFilesLink = uploadFilesManage.objects.get(id=uploadNote)
+            uploadFilesLink.linkToNoticeDetial = NoticeDetial.objects.get(id=targetNoticeDetial.id)
             uploadFilesLink.save()
 
     return render(request, 'workBench/warningNoticeAdd.html', )

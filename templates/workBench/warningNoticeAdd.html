@@ -102,33 +102,23 @@
                 //optional options
             });
             $('#inputGroupFileAdd').click(function () {
-                var dict = new FormData();
-                dict.append("fileName", $('#uploadNote').val().split('\\').pop());
-                {#alert($('#uploadNote').val())#}
-                dict.append("fileContent", document.getElementById('uploadNote').files[0]);
+                var filedict = new FormData();
+                filedict.append("fileName", $('#uploadNote').val().split('\\').pop());
+                filedict.append("fileContent", document.getElementById('uploadNote').files[0]);
                 $.ajax({
                     url: '/workbench/upload',
                     type: 'post',
-                    data: dict,
-                    processData: false,// 告诉jQuery不要去处理发送的数据(必须设置)
-                    contentType: false, // 告诉jQuery不要去设置Content-Type请求头（必须设置）
+                    data: filedict,
+                    processData: false,
+                    contentType: false,
                     dataType: 'JSON',
                     success: function (result) {
-                        if (reslut.status) {
-                            var jsonarray = $.parseJSON(result);
-                            $('#uploadNote').attr('data-filesID', jsonarray["FilesID"])
-                            {#var targetwid = "button[data-tid=" +  + "]";#}
-                            {#$(targetwid).parent().parent().parent().remove();#}
-                            //创建图片标签，并将后台传回来的图片地址加上，显示在页面中
-                            {#var img = document.createElement('img');#}
-                            {#img.src = '/' + arg.path;#}
-                            {#$('.imgs')[0].appendChild(img);#}
-                        }
+                        {#alert(result['FilesID'])#}
+                        {#var FilesResult = $.parseJSON(result);#}
+                        $('#uploadNote').attr('data-filesID', result["FilesID"]);
                     }
-                })
-
-
-            })
+                });
+            });
             $("button[id=warningNoticeAdd]").click(function () {
                 var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                 var noticeNum = $("#noticeNum").val();
