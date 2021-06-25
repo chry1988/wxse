@@ -465,6 +465,8 @@ def warningNotice(request):
             'affectedVendor',
             'affectedComponent',
             'noticeDetail',
+            'uploadfilesmanage__fileName',
+            'uploadfilesmanage__fileUploadTo',
         )
         result = json.dumps({'queryresult': list(returnData), }, cls=DjangoJSONEncoder)
         return HttpResponse(result)
@@ -491,26 +493,34 @@ def warningNoticeDetail(request):
 
 from configureDataBase.forms import UploadFileForm
 import os
+from configureDataBase.models.uploadFiles import uploadFilesManage
 
 
-def handle_uploaded_file(fileName):
-    writeCatalogue = os.path.join(os.path.abspath('..'), 'uploadFiles')
-    fileName = os.path.join(writeCatalogue, fileName)
-    with open(fileName, 'wb+') as destination:
-        for chunk in fileName.chunks():
+def handle_uploaded_file(fileName, files):
+    writeCatalogue = os.path.join(os.path.abspath('.'), 'uploadFiles')
+    fileFullPath = os.path.join(writeCatalogue, fileName)
+    with open(fileFullPath, 'wb+') as destination:
+        for chunk in files.chunks():
             destination.write(chunk)
+    return fileFullPath
 
 
 def uploadFile(request):
     if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            handle_uploaded_file(request.FILES['file'])
-            return HttpResponse('ok')
-            # return HttpResponseRedirect('/success/url/')
+        # form = UploadFileForm(request.POST, request.FILES)
+        # if form.is_valid():
+        updateFileName = request.POST.get('fileName')
+
+        fileFullPath = handle_uploaded_file(updateFileName, request.FILES['fileContent'])
+        FilesID = uploadFilesManage.objects.create(
+            fileName=updateFileName,
+            fileUploadTo=fileFullPath)
+        result = json.dumps({'FilesID': FilesID.id, }, cls=DjangoJSONEncoder)
+        return HttpResponse(result)
     else:
-        form = UploadFileForm()
-    return render(request, 'upload.html', {'form': form})
+        return HttpResponse('ban')
+    #     form = UploadFileForm()
+    # return render(request, 'upload.html', {'form': form})
 
 
 @login_required(login_url='/accounts/login')
@@ -527,12 +537,13 @@ def warningNoticeAdd(request):
         CNNVDserialNumber = request.POST.get('CNNVDserialNumber')
         affectedVendor = request.POST.get('affectedVendor')
         noticeDetail = request.POST.get('noticeDetail')
+        uploadNote = request.POST.get('uploadNote')
         print(noticeNum,
               noticeDate,
               noticeLevel,
               CVEserialNumber,
               affectedVendor, )
-        NoticeDetial.objects.create(
+        targetNoticeDetial= NoticeDetial.objects.create(
             id=noticeNum,
             noticeDate=noticeDate,
             noticeName=noticeName,
@@ -542,6 +553,11 @@ def warningNoticeAdd(request):
             affectedVendor=affectedVendor,
             noticeDetail=noticeDetail,
         )
+        if uploadNote:
+            uploadFilesLink=uploadFilesManage.objects.get(id=uploadNote)
+            uploadFilesLink.linkToNoticeDetial=targetNoticeDetial.id
+            uploadFilesLink.save()
+
     return render(request, 'workBench/warningNoticeAdd.html', )
 
 
@@ -559,9 +575,9 @@ def navbarMenu(request):
     else:
         return HttpResponse('ban')
 
+
 def lastLogin(request):
     checkUser = request.user.id
     checkPrivilege = wxseUser.objects.get(id=checkUser).last_login
     result = json.dumps(checkPrivilege, cls=DjangoJSONEncoder)
     return HttpResponse(result)
-

@@ -10,4 +10,4 @@ def defaultuUploadPath():
 class uploadFilesManage(models.Model):
     fileName = models.CharField(max_length=255, verbose_name='上传文件')
     fileUploadTo = models.FilePathField(path=defaultuUploadPath)
-    linkToNoticeDetial = models.ForeignKey(NoticeDetial, on_delete=models.CASCADE)
+    linkToNoticeDetial = models.ForeignKey(NoticeDetial, on_delete=models.CASCADE ,null=True,blank=True)
