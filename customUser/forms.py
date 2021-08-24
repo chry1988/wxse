@@ -11,4 +11,8 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
         model = wxseUser
-        fields = UserChangeForm.Meta.fields
+        # fields = UserChangeForm.Meta.fields
+        fieldsets = [
+            (None, {'fields': ['userDepartment', 'userGroup','userPrivilege','userPhone']}),
+
+        ]
